@@ -32,6 +32,7 @@ export default function Dashboard({navigation}) {
 		})		
 
     //listen for any newly broadcasted or unicasted pickups
+    console.log("Listening for assign Pickup at dashboard:35");
     socket.on("assignPickup", (sock_data)=>{
       console.log("Received assignPickup message")
       data.push(sock_data.message);
