@@ -1,15 +1,10 @@
 import React, { useContext } from "react";
-import { StyleSheet, Text, View, Image, Button, Icon,SafeAreaView, TouchableOpacity, Picker} from 'react-native';
+import { SafeAreaView} from 'react-native';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { styles } from "./styles";
-import ModalDropdown from "react-native-modal-dropdown";
-import { NavigationContainer } from "@react-navigation/native";
-import io from "socket.io-client";
 import {SocketContext} from '../context/socket';
 const providerApi = require("../helpers/volunteerApi.js");
 import * as SecureStore from "expo-secure-store";
-import {SOCKET_URL} from "../config.json";
-import SecondStep from "./secondStep";
 import PickupDetails from "../components/DetailsForm/PickupDetails"
 import ActionBox from "../components/ActionBox/";
 

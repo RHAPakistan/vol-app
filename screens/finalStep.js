@@ -1,27 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, Button, Icon,SafeAreaView, TouchableOpacity, Picker} from 'react-native';
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { styles } from "./styles";
-import ModalDropdown from "react-native-modal-dropdown";
-import PickupDetails from "../components/DetailsForm/PickupDetails"
-import ActionBox from "../components/ActionBox/";
+import { StyleSheet, Text, View,SafeAreaView, TouchableOpacity} from 'react-native';
+import { ScrollView } from "react-native-gesture-handler";
+//import { styles } from "./styles";
+
 import ProgressBar from "../components/ProgressBar";
 
 function FinalStep({navigation, route}) {    
     const id = route.params.id;
-    const [text, onChangeText] = React.useState("name");
-    const [phone, onChangePhone] = React.useState("phone");
-    const [displayText, setDisplayText] = React.useState(text);
-    const [displayPhone, setDisplayPhone] = React.useState(text);
-    const [editClicked, setEdit] = React.useState('false');
-    const [selectedValue, setSelectedValue] = React.useState("biryani");
-    const [descriptionText, setDescription] = React.useState("Add description");
-    const [locationLink, setLocation] = React.useState("paste maps link here or enter address");
-    const [requestPlaced, setRequestPlaced] = React.useState('false');
-
-    const cancelPickUp = () =>{
-        navigation.navigate("dashboard");
-    }   
+ 
     const data = {
 		BOOKING_TIME: id.placementTime,
 		// COMPLETION_TIME: '{COMPLETION_TIME}',
@@ -40,20 +26,85 @@ function FinalStep({navigation, route}) {
 		DROPOFF_LOC: "anyone",
 		VOLUNTEER: "anything"
 	};
-    const proceed = ()=>{
-        //completed pickup
-        navigation.navigate("finalstep", {id});
-        
-    }
+    const buttonPressed = () =>{
+        navigation.navigate("dashboard");
+    } 
+    
     return ( 
-        <ScrollView>
-        <ProgressBar active={3} message="The food has been delivered" />
-
-        <SafeAreaView style={styles.containerDashboard}>
-            <PickupDetails data={data}/>
+        <SafeAreaView>
+            <ScrollView>
+            <ProgressBar active={3} message="The food has been delivered" />
+                <View style={styles.main}>
+                    <Text style={styles.thankText}>Thank You!</Text>
+                    <Text style={styles.message}>John Doe, we appreciate you for giving your precious time to deliver the food.</Text>
+                    <TouchableOpacity style={styles.button} onPress={buttonPressed}>
+                        <Text style={styles.buttonText}>Go to Dashboard</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </SafeAreaView>
-        </ScrollView>
      );
 }
 
+const styles = StyleSheet.create({
+    containerDashboard: {
+        flex: 1,
+        backgroundColor: '#F0F0F0',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        paddingTop:50,
+        paddingLeft: 15,
+        paddingRight: 15
+      },
+    header:{
+        margin: '2%',
+        paddingTop: '5%',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    headerText:{
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#155F30'
+    },
+    line:{
+        paddingTop: '1%',
+        marginLeft: '1%',
+        maxWidth: '98%',
+        borderBottomColor: '#155F30',
+        borderBottomWidth: 1.5,
+    },
+    main:{
+        margin: '12%',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    thankText:{
+        marginTop: '3%',
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#155F30',
+    },
+    message:{
+        marginTop: '3%',
+        fontSize: 16,
+        color: '#39bf6a',
+    },
+    button: {
+        marginTop: '3%',
+        width: 240,
+        height: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        backgroundColor: '#155F30',
+        marginTop: '5%',
+
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+});
 export default FinalStep;

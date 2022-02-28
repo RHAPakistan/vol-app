@@ -1,19 +1,14 @@
 import React, { useContext } from "react";
-import { Component, useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image, Button, PermissionsAndroid,SafeAreaView, TouchableOpacity, Alert} from 'react-native';
-import { styles } from "./styles";
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from "./home";
-import { NavigationContainer } from "@react-navigation/native"; 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Geolocation from 'react-native-geolocation-service';
-import PickupList from '../components/PickupList/';
+import { useState, useEffect } from "react";
+import { Text, View, SafeAreaView, TouchableOpacity, Alert, ScrollView} from 'react-native';
 const volunteerApi = require("../helpers/volunteerApi.js");
+import { styles } from '../styles/dashboardStyles';
 import { SocketContext} from "../context/socket";
 
 export default function Dashboard({navigation}) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
+  const [pickups, setPickups] = useState([]);
 
   useEffect(()=>{
     //get all pickups with status code 1
@@ -26,6 +21,7 @@ export default function Dashboard({navigation}) {
 		fetchData()
 		.then((response)=>{
 			setData(response);
+      setPickups(response)
 		})
 		.catch((e)=>{
 			console.log(e);
@@ -71,10 +67,38 @@ export default function Dashboard({navigation}) {
     navigation.navigate('contact')
   }
   return ( 
-    <SafeAreaView style={styles.containerDashboard}>
-
-      <PickupList data={data} onPress = {onClick}/>
-
+    
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.requestText}>Active Pickup Requests</Text>
+      <ScrollView style={styles.requestScrollView}>
+          {console.log(pickups)}
+          {pickups? 
+              pickups.map(pickup => (
+              <View style={styles.requestCard}  key={pickup._id}>
+                  <Text style={styles.requestHeader}>Pickup Loaction:</Text>
+                  <Text style={styles.detailsText}>{pickup.pickupAddress}</Text>
+                  <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Dropoff Loaction:</Text>
+                  <Text style={styles.detailsText}>{pickup.deliveryAddress}</Text>
+                  <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Food Details:</Text>
+                  <Text style={styles.detailsText}>{pickup.description}</Text>
+                  <TouchableOpacity style={styles.button} onPress={onClick}>
+                      <Text style={styles.buttonText}>Accept</Text>         
+                  </TouchableOpacity>
+              </View>
+          ))
+          :
+          <View><Text style={styles.nullText}>No pickup as of yet.</Text></View> 
+          }
+          
+      </ScrollView>
+      <Text style={styles.requestText}>Drives Requests</Text>
+      <ScrollView style={styles.requestScrollView}>
+          <Text style={styles.nullText}>No Drives as of Yet.</Text>
+      </ScrollView>
+      <View style={styles.footer}>
+          <Text>Footer here</Text>
+      </View>            
     </SafeAreaView>
-         );
-    }
+
+  );
+}

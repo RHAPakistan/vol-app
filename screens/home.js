@@ -12,7 +12,7 @@ const HomeScreen = ({navigation}) => {
 
   var logo = require('../assets/logo.jpg');
   const userLoginClicked = () => {
-    console.log("this was clicked");
+    console.log("this was click");
     setIsUserLoginClicked(true);
   }
   const guestLoginClicked = () => {
