@@ -8,7 +8,6 @@ import { SocketContext} from "../context/socket";
 export default function Dashboard({navigation}) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
-  const [pickups, setPickups] = useState([]);
 
   useEffect(()=>{
     //get all pickups with status code 1
@@ -21,7 +20,6 @@ export default function Dashboard({navigation}) {
 		fetchData()
 		.then((response)=>{
 			setData(response);
-      setPickups(response)
 		})
 		.catch((e)=>{
 			console.log(e);
@@ -71,9 +69,9 @@ export default function Dashboard({navigation}) {
     <SafeAreaView style={styles.container}>
       <Text style={styles.requestText}>Active Pickup Requests</Text>
       <ScrollView style={styles.requestScrollView}>
-          {console.log(pickups)}
-          {pickups? 
-              pickups.map(pickup => (
+          {console.log(data)}
+          {data? 
+              data.map(pickup => (
               <View style={styles.requestCard}  key={pickup._id}>
                   <Text style={styles.requestHeader}>Pickup Loaction:</Text>
                   <Text style={styles.detailsText}>{pickup.pickupAddress}</Text>
