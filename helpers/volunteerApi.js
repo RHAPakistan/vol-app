@@ -1,6 +1,4 @@
 import * as SecureStore from 'expo-secure-store';
-import { concat } from 'react-native-reanimated';
-import { retrySymbolicateLogNow } from 'react-native/Libraries/LogBox/Data/LogBoxData';
 import {API_URL} from "../config.json";
 import {initiateSocketConnection} from "../context/socket";
 
@@ -104,8 +102,33 @@ module.exports = {
             console.log(e);
             console.log("error");
         })
-    return resp;
+        return resp;
+    },
+
+    getDrives: async()=>{
+        const token = await SecureStore.getItemAsync('auth_token');
+        const resp = await fetch(API_URL.concat('/api/volunteer/getDrives'), {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': "Token " + token
+            }
+        })
+        .then((response)=>{
+            return response.json();
+        })
+        .then((json)=>{
+            console.log(json);
+            return json;
+        })
+        .catch((e) =>{
+            console.log(e);
+            console.log("error");
+        })
+        return resp;
     }
+
     // createPickup: async (pickup_object) =>{
     //     var tok = await SecureStore.getItemAsync("auth_token");
     //     var token = concat("Token ",tok);
