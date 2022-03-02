@@ -11,7 +11,7 @@ import Support from "./support";
 import History from "./history";
 import DashStack from "./dashStack";
 import CustomDrawerContent from "../components/CustomDrawerContent";
-
+import PrimaryHeader from "../components/ScreenHeaders/PrimaryHeader";
 
 export default function Drawer() {
 
@@ -42,7 +42,9 @@ export default function Drawer() {
       <RootDrawerNavigator.Screen
         name='Dashboard'
         component={DashStack} 
-        options={{ headerShown: false }}/>
+        options={({ navigation }) => {
+					return PrimaryHeader(navigation, "Dashboard");
+				}}/>
       <RootDrawerNavigator.Screen
         name='History'
         component={History}

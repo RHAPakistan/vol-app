@@ -3,14 +3,9 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import styles from './styles';
 import {SocketContext} from "../../context/socket";
 
-const PickupCard = ({pickup, onClickPickup}) => {
+const PickupCard = ({pickup, onClickPickup, onClickReject}) => {
 
     const socket = useContext(SocketContext);
-    const onClickReject = () =>{
-        pickup.broadcast = true;
-        delete pickup.volunteer;
-        socket.emit("broadcastPickup",{"message":{pickup}});
-    }
     return (
         <View style={styles.modalView} key={pickup._id}>
 
@@ -26,7 +21,7 @@ const PickupCard = ({pickup, onClickPickup}) => {
             <TouchableOpacity style={styles.button} onPress={onClickPickup}>
                 <Text style={styles.buttonText}>Accept</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={onClickPickup}>
+            <TouchableOpacity style={styles.button} onPress={onClickReject}>
                 <Text style={styles.buttonText}>Reject</Text>
             </TouchableOpacity>
         </View>

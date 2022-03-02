@@ -40,6 +40,7 @@ export default function Dashboard({navigation}) {
 		})		
 
     //listen for any newly broadcasted or unicasted pickups
+    
     console.log("Listening for assign Pickup at dashboard:35");
     socket.on("assignPickup", (sock_data)=>{
       console.log("Received assignPickup message")
@@ -51,12 +52,14 @@ export default function Dashboard({navigation}) {
       console.log("Received specific pickup", sock_data.message);
       setPopPickup(sock_data.message);
       setModalVisible(!modalVisible);
+    })
     return ()=>{
       console.log("turning off socket on assignPickup ");
       socket.off("assignPickup");
       socket.off("assignPickupSpecific");
     }
   },[])
+
   async function onClick(id){
     Alert.alert(
       "Pickup",
@@ -84,10 +87,18 @@ export default function Dashboard({navigation}) {
   function onClickContact(){
     navigation.navigate('contact')
   }
+
+  function onClickReject(){
+    popPickup.broadcast = true
+    delete popPickup.volunteer;
+    socket.emit("broadcastPickup",{"message":popPickup});
+    setModalVisible(!modalVisible);
+  }
   return ( 
     <SafeAreaView style={styles.containerDashboard}>
   
-      <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible} pickup={popPickup} onClickPickup={onClick}/>     
+      <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible}
+       pickup={popPickup} onClickPickup={onClick} onClickReject={onClickReject}/>     
       <PickupList data={data} onPress = {onClick} />
 
     </SafeAreaView>

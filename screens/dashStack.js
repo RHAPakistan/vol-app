@@ -24,9 +24,7 @@ export default function DashStack({navigation}) {
               <Stack.Screen
                   name="dashboard"
                   component={Dashboard}
-                  options={({ navigation }) => {
-					return PrimaryHeader(navigation, "Dashboard");
-				}}
+                  options={{headerShown: false}}
               />
               <Stack.Screen 
                   name = "secondstep"
