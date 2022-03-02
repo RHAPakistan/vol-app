@@ -7,37 +7,51 @@ import { SocketContext} from "../context/socket";
 
 export default function Dashboard({navigation}) {
   const socket = useContext(SocketContext);
-  const [data, setData] = useState([]);
+  const [pickups, setPickups] = useState([]);
+  const [drives, setDrives] = useState([]);
 
   useEffect(()=>{
     //get all pickups with status code 1
     console.log("dashboard screen mounted");
-		const fetchData = async()=>{
+
+		const fetchPickups = async()=>{
 			const resp = await volunteerApi.get_pickups_by_vol_id();
-      // console.log("The pickups are ",resp.pickups);
 			return resp.pickups;
 		}
-		fetchData()
+		fetchPickups()
 		.then((response)=>{
-			setData(response);
+			setPickups(response);
 		})
 		.catch((e)=>{
 			console.log(e);
-		})		
+		});
+    
+    const fetchDrives = async()=>{
+			const resp = await volunteerApi.getDrives();
+			return resp.drives;
+		}
+		fetchDrives()
+		.then((response)=>{
+      console.log(response);
+			setDrives(response);
+		})
+		.catch((e)=>{
+			console.log(e);
+		})
 
     //listen for any newly broadcasted or unicasted pickups
     console.log("Listening for assign Pickup at dashboard:35");
     socket.on("assignPickup", (sock_data)=>{
       console.log("Received assignPickup message")
-      data.push(sock_data.message);
-      setData(data);
+      pickups.push(sock_data.message);
+      setPickups(pickups);
     })
     return ()=>{
       console.log("turning off socket on assignPickup ");
       socket.off("assignPickup");
     }
   },[])
-  async function onClick(id){
+  async function onClickPickup(id){
     Alert.alert(
       "Pickup",
       "Do you want to accept this pickup?",
@@ -61,6 +75,9 @@ export default function Dashboard({navigation}) {
     )
 
   }
+  const onClickDrive = () =>{
+    console.log("drive clicked");
+  }
   function onClickContact(){
     navigation.navigate('contact')
   }
@@ -68,18 +85,22 @@ export default function Dashboard({navigation}) {
     
     <SafeAreaView style={styles.container}>
       <Text style={styles.requestText}>Active Pickup Requests</Text>
-      <ScrollView style={styles.requestScrollView}>
-          {console.log(data)}
-          {data? 
-              data.map(pickup => (
+      <ScrollView style={styles.requestScrollView}>        
+          {console.log(pickups)}
+          {pickups? 
+              pickups.map(pickup => (
               <View style={styles.requestCard}  key={pickup._id}>
+
                   <Text style={styles.requestHeader}>Pickup Loaction:</Text>
                   <Text style={styles.detailsText}>{pickup.pickupAddress}</Text>
+
                   <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Dropoff Loaction:</Text>
                   <Text style={styles.detailsText}>{pickup.deliveryAddress}</Text>
+
                   <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Food Details:</Text>
                   <Text style={styles.detailsText}>{pickup.description}</Text>
-                  <TouchableOpacity style={styles.button} onPress={onClick}>
+
+                  <TouchableOpacity style={styles.button} onPress={onClickPickup}>
                       <Text style={styles.buttonText}>Accept</Text>         
                   </TouchableOpacity>
               </View>
@@ -87,11 +108,28 @@ export default function Dashboard({navigation}) {
           :
           <View><Text style={styles.nullText}>No pickup as of yet.</Text></View> 
           }
-          
       </ScrollView>
       <Text style={styles.requestText}>Drives Requests</Text>
       <ScrollView style={styles.requestScrollView}>
-          <Text style={styles.nullText}>No Drives as of Yet.</Text>
+        {console.log(drives)}
+          {drives? 
+              drives.map(drive => (
+              <View style={styles.requestCard}  key={drive._id}>
+
+                  <Text style={styles.requestHeader}>Drive Location/Area:</Text>
+                  <Text style={styles.detailsText}>{drive.driveLocation}</Text>
+
+                  <Text style={styles.requestHeader}>Date and Time:</Text>
+                  <Text style={styles.detailsText}>{drive.date}</Text>
+                  
+                  <TouchableOpacity style={styles.button} onPress={onClickDrive}>
+                      <Text style={styles.buttonText}>See Details</Text>         
+                  </TouchableOpacity>
+              </View>
+          ))
+          :
+          <View><Text style={styles.nullText}>No drive as of yet.</Text></View> 
+        }
       </ScrollView>
       <View style={styles.footer}>
           <Text>Footer here</Text>
