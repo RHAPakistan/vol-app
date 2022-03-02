@@ -5,7 +5,7 @@ import { styles } from "./styles";
 import ModalDropdown from "react-native-modal-dropdown";
 import { socket } from "../context/socket";
 import PickupDetails from "../components/DetailsForm/PickupDetails"
-import ActionBox from "../components/ActionBox/";
+import ActionBox from "../components/ActionBox";
 import ProgressBar from "../components/ProgressBar";
 import {SocketContext} from "../context/socket";
 

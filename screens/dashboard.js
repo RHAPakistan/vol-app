@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Component, useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image, Button, PermissionsAndroid,SafeAreaView, TouchableOpacity, Alert} from 'react-native';
+import { Pressable, StyleSheet, Text, View, Modal, Image, Button, PermissionsAndroid,SafeAreaView, TouchableOpacity, Alert} from 'react-native';
 import { styles } from "./styles";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from "./home";
@@ -10,10 +10,18 @@ import Geolocation from 'react-native-geolocation-service';
 import PickupList from '../components/PickupList/';
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { SocketContext} from "../context/socket";
+import PickupModal from "../components/Notifications/pickupModal";
 
 export default function Dashboard({navigation}) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [popPickup, setPopPickup] = useState({
+    "_id":1,
+    "pickupAdress":"iba karachi",
+    "deliveryAddress":"iba city",
+    "description": "Please pickup the food on time"
+  });
 
   useEffect(()=>{
     //get all pickups with status code 1
@@ -38,9 +46,15 @@ export default function Dashboard({navigation}) {
       data.push(sock_data.message);
       setData(data);
     })
+
+    socket.on("assignPickupSpecific", (sock_data)=>{
+      console.log("Received specific pickup", sock_data.message);
+      setPopPickup(sock_data.message);
+      setModalVisible(!modalVisible);
     return ()=>{
       console.log("turning off socket on assignPickup ");
       socket.off("assignPickup");
+      socket.off("assignPickupSpecific");
     }
   },[])
   async function onClick(id){
@@ -72,8 +86,9 @@ export default function Dashboard({navigation}) {
   }
   return ( 
     <SafeAreaView style={styles.containerDashboard}>
-
-      <PickupList data={data} onPress = {onClick}/>
+  
+      <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible} pickup={popPickup} onClickPickup={onClick}/>     
+      <PickupList data={data} onPress = {onClick} />
 
     </SafeAreaView>
          );
