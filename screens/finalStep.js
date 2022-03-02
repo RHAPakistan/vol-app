@@ -6,23 +6,23 @@ import { ScrollView } from "react-native-gesture-handler";
 import ProgressBar from "../components/ProgressBar";
 
 function FinalStep({navigation, route}) {    
-    const id = route.params.id;
+    const pickup = route.params.pickup;
  
     const data = {
-		BOOKING_TIME: id.placementTime,
+		BOOKING_TIME: pickup.placementTime,
 		// COMPLETION_TIME: '{COMPLETION_TIME}',
 		// CANCELLATION_TIME: '{CANCELLATION_TIME}',
-		CONTACT_NAME: id._id,
-		CONTACT_PHONE: id.provieder_phone,
+		CONTACT_NAME: pickup._id,
+		CONTACT_PHONE: pickup.provieder_phone,
 		PROVIDER: {
 			type: 'Registered',
 			name: "",
 			action: () => console.log('Provider Button Pressed'),
 		},
-		PICKUP_LOCATION: () => console.log(id.pickupAddress),
-		SURPLUS_TYPE: id.typeOfFood,
+		PICKUP_LOCATION: () => console.log(pickup.pickupAddress),
+		SURPLUS_TYPE: pickup.typeOfFood,
 		DESCRIPTION:
-			id.description,
+			pickup.description,
 		DROPOFF_LOC: "anyone",
 		VOLUNTEER: "anything"
 	};

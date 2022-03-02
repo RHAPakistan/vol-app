@@ -107,12 +107,12 @@ module.exports = {
 
     getDrives: async()=>{
         const token = await SecureStore.getItemAsync('auth_token');
-        const resp = await fetch(API_URL.concat('/api/volunteer/getDrives'), {
+        const volunteer_id = await SecureStore.getItemAsync('volunteer_id');
+        const resp = await fetch(API_URL.concat(`/api/volunteer/getDrives/${volunteer_id}`), {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': "Token " + token
             }
         })
         .then((response)=>{
@@ -127,8 +127,36 @@ module.exports = {
             console.log("error");
         })
         return resp;
-    }
+    },
 
+    acceptDrive: async(id)=>{
+        const token = await SecureStore.getItemAsync('auth_token');
+        const volunteer_id = await SecureStore.getItemAsync('volunteer_id');
+        const resp = await fetch(API_URL.concat(`/api/volunteer/enrollDrive/${id}`), {
+            method: 'PATCH',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer " + token
+            },
+            body: JSON.stringify({
+                volunteer_id: volunteer_id
+            })
+        })
+        .then((response)=>{
+            return response.json();
+        })
+        .then((json)=>{
+            console.log(json);
+            return json;
+        })
+        .catch((e) =>{
+            console.log(e);
+            console.log("error");
+        })
+        return resp;
+    }
+    
     // createPickup: async (pickup_object) =>{
     //     var tok = await SecureStore.getItemAsync("auth_token");
     //     var token = concat("Token ",tok);

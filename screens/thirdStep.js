@@ -1,9 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, Text, View, Image, Button, Icon,SafeAreaView, TouchableOpacity, Picker} from 'react-native';
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { styles } from "./styles";
-import ModalDropdown from "react-native-modal-dropdown";
-import { socket } from "../context/socket";
+import { View, SafeAreaView} from 'react-native';
+import { ScrollView} from "react-native-gesture-handler";
 import PickupDetails from "../components/DetailsForm/PickupDetails"
 import ActionBox from "../components/ActionBox/";
 import ProgressBar from "../components/ProgressBar";
@@ -12,35 +9,26 @@ import {SocketContext} from "../context/socket";
 function ThirdStep({navigation, route}) {
 
     const socket = useContext(SocketContext);
-    const id = route.params.id;
-    const [text, onChangeText] = React.useState("name");
-    const [phone, onChangePhone] = React.useState("phone");
-    const [displayText, setDisplayText] = React.useState(text);
-    const [displayPhone, setDisplayPhone] = React.useState(text);
-    const [editClicked, setEdit] = React.useState('false');
-    const [selectedValue, setSelectedValue] = React.useState("biryani");
-    const [descriptionText, setDescription] = React.useState("Add description");
-    const [locationLink, setLocation] = React.useState("paste maps link here or enter address");
-    const [requestPlaced, setRequestPlaced] = React.useState('false');
+    const pickup = route.params.pickup;
 
     const cancelPickUp = () =>{
         navigation.navigate("dashboard");
     }   
     const data = {
-		BOOKING_TIME: id.placementTime,
+		BOOKING_TIME: pickup.placementTime,
 		// COMPLETION_TIME: '{COMPLETION_TIME}',
 		// CANCELLATION_TIME: '{CANCELLATION_TIME}',
-		CONTACT_NAME: id._id,
-		CONTACT_PHONE: id.provieder_phone,
+		CONTACT_NAME: pickup._id,
+		CONTACT_PHONE: pickup.provieder_phone,
 		PROVIDER: {
 			type: 'Registered',
 			name: "",
 			action: () => console.log('Provider Button Pressed'),
 		},
-		PICKUP_LOCATION: () => console.log(id.pickupAddress),
-		SURPLUS_TYPE: id.typeOfFood,
+		PICKUP_LOCATION: () => console.log(pickup.pickupAddress),
+		SURPLUS_TYPE: pickup.typeOfFood,
 		DESCRIPTION:
-			id.description,
+			pickup.description,
 		DROPOFF_LOC: "anyone",
 		VOLUNTEER: "anything"
 	};
@@ -48,9 +36,9 @@ function ThirdStep({navigation, route}) {
         //completed pickup
         //emit food delivered -> finishPickup
         //change status to 3 (completed)
-        id.status = 3
-        socket.emit("finishPickup", {"message":id});
-        navigation.navigate("finalstep", {id});
+        pickup.status = 3
+        socket.emit("finishPickup", {"message":pickup});
+        navigation.navigate("finalstep", {pickup});
         
     }
     return ( 

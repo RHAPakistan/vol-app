@@ -51,7 +51,8 @@ export default function Dashboard({navigation}) {
       socket.off("assignPickup");
     }
   },[])
-  async function onClickPickup(id){
+  
+  async function onClickPickup(pickup){
     Alert.alert(
       "Pickup",
       "Do you want to accept this pickup?",
@@ -61,9 +62,9 @@ export default function Dashboard({navigation}) {
           onPress: () => {
             console.log("pickup accepted");
             //change the status to 2 (accepted)
-            id.status = 2
-            socket.emit("acceptPickup",{"message":id})
-            navigation.navigate("secondstep", {id});
+            pickup.status = 2
+            socket.emit("acceptPickup",{"message":pickup})
+            navigation.navigate("secondstep", {pickup});
           }
         },
         {
@@ -75,12 +76,11 @@ export default function Dashboard({navigation}) {
     )
 
   }
-  const onClickDrive = () =>{
-    console.log("drive clicked");
+
+  const onClickDrive = (drive) =>{
+    navigation.navigate("driveDetails", {drive})
   }
-  function onClickContact(){
-    navigation.navigate('contact')
-  }
+
   return ( 
     
     <SafeAreaView style={styles.container}>
@@ -100,7 +100,7 @@ export default function Dashboard({navigation}) {
                   <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Food Details:</Text>
                   <Text style={styles.detailsText}>{pickup.description}</Text>
 
-                  <TouchableOpacity style={styles.button} onPress={onClickPickup}>
+                  <TouchableOpacity style={styles.button} onPress={()=>onClickPickup(pickup)}>
                       <Text style={styles.buttonText}>Accept</Text>         
                   </TouchableOpacity>
               </View>
@@ -115,14 +115,13 @@ export default function Dashboard({navigation}) {
           {drives? 
               drives.map(drive => (
               <View style={styles.requestCard}  key={drive._id}>
-
                   <Text style={styles.requestHeader}>Drive Location/Area:</Text>
                   <Text style={styles.detailsText}>{drive.driveLocation}</Text>
 
                   <Text style={styles.requestHeader}>Date and Time:</Text>
                   <Text style={styles.detailsText}>{drive.date}</Text>
                   
-                  <TouchableOpacity style={styles.button} onPress={onClickDrive}>
+                  <TouchableOpacity style={styles.button} onPress={()=>onClickDrive(drive)}>
                       <Text style={styles.buttonText}>See Details</Text>         
                   </TouchableOpacity>
               </View>
