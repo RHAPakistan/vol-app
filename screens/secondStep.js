@@ -8,11 +8,12 @@ import PickupDetails from "../components/DetailsForm/PickupDetails"
 import ActionBox from "../components/ActionBox";
 import ProgressBar from "../components/ProgressBar";
 import {SocketContext} from "../context/socket";
+const volunteerApi = require("../helpers/volunteerApi");
 
 function SecondStep({ navigation, route }) {
 
     const socket = useContext(SocketContext);
-    const id = route.params.id;
+    const pickup = route.params.id;
     const [text, onChangeText] = React.useState("name");
     const [phone, onChangePhone] = React.useState("phone");
     const [displayText, setDisplayText] = React.useState(text);
@@ -22,32 +23,47 @@ function SecondStep({ navigation, route }) {
     const [descriptionText, setDescription] = React.useState("Add description");
     const [locationLink, setLocation] = React.useState("paste maps link here or enter address");
     const [requestPlaced, setRequestPlaced] = React.useState('false');
+    const [current_provider, setCurrentProvider] = React.useState({});
 
+	useEffect(()=>{
+		const get_prov = async()=>{
+			var current_provider = await volunteerApi.get_provider(pickup.provider);
+			return current_provider
+		}
+		get_prov()
+		.then((response)=>{
+			setCurrentProvider(response);
+		})
+		.catch((e)=>{
+			console.log(e);
+		})
+	},[])
+    
     const cancelPickUp = () => {
         navigation.navigate("dashboard");
     }
     const data = {
-        BOOKING_TIME: id.placementTime,
+        BOOKING_TIME: pickup.placementTime,
         // COMPLETION_TIME: '{COMPLETION_TIME}',
         // CANCELLATION_TIME: '{CANCELLATION_TIME}',
-        CONTACT_NAME: id._id,
-        CONTACT_PHONE: id.provieder_phone,
+        CONTACT_NAME: current_provider.fullName,
+        CONTACT_PHONE: current_provider.contactNumber,
         PROVIDER: {
             type: 'Registered',
-            name: "",
+            name: current_provider.fullName,
             action: () => console.log('Provider Button Pressed'),
         },
-        PICKUP_LOCATION: () => console.log(id.pickupAddress),
-        SURPLUS_TYPE: id.typeOfFood,
+        PICKUP_LOCATION: pickup.pickupAddress,
+        SURPLUS_TYPE: pickup.typeOfFood,
         DESCRIPTION:
-            id.description,
+            pickup.description,
         DROPOFF_LOC: "anyone",
-        VOLUNTEER: "anything"
+        VOLUNTEER: pickup.volunteer?pickup.volunteer:"broadcasted"
     };
     const proceed = () => {
         //emit message that food has been picked
-        socket.emit("foodPicked", {"message":id});
-        navigation.navigate("thirdstep", { id });
+        socket.emit("foodPicked", {"message":pickup});
+        navigation.navigate("thirdstep", { pickup, current_provider});
     }
     return (
         <ScrollView>

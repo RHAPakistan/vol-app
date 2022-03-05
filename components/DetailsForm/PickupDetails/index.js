@@ -72,7 +72,7 @@ const PickupDetails = ({ data }) => {
 			{ProviderLine}
 
 			{/* Go to google map when clicked to find the location */}
-			<ButtonLine
+			<TextLineClickable
 				index={indexOffset + 4}
 				label='Pickup Location'
 				title='Map'

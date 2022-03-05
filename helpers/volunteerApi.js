@@ -77,6 +77,26 @@ module.exports = {
         })
     return resp;
     },
+    get_provider: async(id) =>{
+        const resp = await fetch(API_URL.concat(`/api/admin/provider/${id}`),{
+            method: 'GET',
+            headers:{
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response)=>{
+            return response.json();
+        })
+        .then((json)=>{
+            return json
+        })
+        .catch((e)=>{
+            console.log(e);
+            console.log("error!");
+        })
+    return resp;
+    },
 
     //this function returns either broadcasted pickups or the ones assigned
     //to the volunteer

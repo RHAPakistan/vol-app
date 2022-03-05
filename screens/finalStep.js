@@ -8,7 +8,8 @@ import ActionBox from "../components/ActionBox/";
 import ProgressBar from "../components/ProgressBar";
 
 function FinalStep({navigation, route}) {    
-    const id = route.params.id;
+    const pickup = route.params.pickup;
+    const current_provider = route.params.current_provider;
     const [text, onChangeText] = React.useState("name");
     const [phone, onChangePhone] = React.useState("phone");
     const [displayText, setDisplayText] = React.useState(text);
@@ -23,28 +24,23 @@ function FinalStep({navigation, route}) {
         navigation.navigate("dashboard");
     }   
     const data = {
-		BOOKING_TIME: id.placementTime,
-		// COMPLETION_TIME: '{COMPLETION_TIME}',
-		// CANCELLATION_TIME: '{CANCELLATION_TIME}',
-		CONTACT_NAME: id._id,
-		CONTACT_PHONE: id.provieder_phone,
-		PROVIDER: {
-			type: 'Registered',
-			name: "",
-			action: () => console.log('Provider Button Pressed'),
-		},
-		PICKUP_LOCATION: () => console.log(id.pickupAddress),
-		SURPLUS_TYPE: id.typeOfFood,
-		DESCRIPTION:
-			id.description,
-		DROPOFF_LOC: "anyone",
-		VOLUNTEER: "anything"
-	};
-    const proceed = ()=>{
-        //completed pickup
-        navigation.navigate("finalstep", {id});
-        
-    }
+        BOOKING_TIME: pickup.placementTime,
+        // COMPLETION_TIME: '{COMPLETION_TIME}',
+        // CANCELLATION_TIME: '{CANCELLATION_TIME}',
+        CONTACT_NAME: current_provider.fullName,
+        CONTACT_PHONE: current_provider.contactNumber,
+        PROVIDER: {
+            type: 'Registered',
+            name: current_provider.fullName,
+            action: () => console.log('Provider Button Pressed'),
+        },
+        PICKUP_LOCATION: pickup.pickupAddress,
+        SURPLUS_TYPE: pickup.typeOfFood,
+        DESCRIPTION:
+            pickup.description,
+        DROPOFF_LOC: "anyone",
+        VOLUNTEER: pickup.volunteer?pickup.volunteer:"broadcasted"
+    };
     return ( 
         <ScrollView>
         <ProgressBar active={3} message="The food has been delivered" />
