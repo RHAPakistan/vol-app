@@ -7,11 +7,11 @@ import HomeScreen from "./home";
 import { NavigationContainer } from "@react-navigation/native"; 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Dashboard from "./dashboard";
-import SecondStep from "./secondStep";
-import ThirdStep from "./thirdStep";
-import FinalStep from "./finalStep";
+import SecondStep from "./steps/SecondStep";
+import ThirdStep from "./steps/ThirdStep";
 import Contact from "./contact";
 import PrimaryHeader from "../components/ScreenHeaders/PrimaryHeader";
+import FirstStep from "./steps/FirstStep";
 
 export default function DashStack({navigation}) {
  
@@ -24,19 +24,24 @@ export default function DashStack({navigation}) {
               <Stack.Screen
                   name="dashboard"
                   component={Dashboard}
-                  options={{headerShown: false}}
+                  options={({ navigation }) => {
+                    return PrimaryHeader(navigation, "Dashboard");
+                  }}
               />
               <Stack.Screen 
-                  name = "secondstep"
-                  component = {SecondStep}
+                  name = "firststep"
+                  component = {FirstStep}
+                  options={{headerShown:false}}
               />
+              <Stack.Screen
+                name = "secondstep"
+                component = {SecondStep}
+                options={{headerShown:false}}
+                />
               <Stack.Screen
                 name = "thirdstep"
                 component = {ThirdStep}
-                />
-              <Stack.Screen
-                name = "finalstep"
-                component = {FinalStep}
+                options={{headerShown:false}}
                 />
             <Stack.Screen
                 name = "contact"

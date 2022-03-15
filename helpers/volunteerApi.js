@@ -31,16 +31,11 @@ module.exports = {
         })
         .then(async (json) => {
             console.log("succesful network request");
-            // console.log(json.status);
-            // if (response.status==200){
-            //     console.log("200")
-            //     var json = await response.json()
-            // }
-            //console.log(json);
-            
             if (json){
                 await localStorage.storeData('auth_token',json.token);
                 await localStorage.storeData('volunteer_id',json._id);
+                await localStorage.storeData('fullName', json.fullName);
+                await localStorage.storeData('phone', json.contactNumber);
                 initiateSocketConnection()
                 return true
             }else{

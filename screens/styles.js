@@ -12,11 +12,11 @@ export const styles = StyleSheet.create({
     containerDashboard: {
       flex: 1,
       backgroundColor: '#F0F0F0',
-      alignItems: 'flex-start',
-      justifyContent: 'flex-start',
+      // alignItems: 'center',
+      // justifyContent: 'flex-start',
       paddingTop:50,
-      paddingLeft: 15,
-      paddingRight: 15
+      paddingLeft: 5,
+      paddingRight: 5
     },
     text: {
       color: 'white',
@@ -114,6 +114,12 @@ export const styles = StyleSheet.create({
       color: "white",
       fontWeight: "bold",
       textAlign: "center"
+    },
+    heading: {
+      color: "green",
+      fontWeight: "bold",
+      textAlign: "center",
+      fontSize: 20
     },
     modalText: {
       marginBottom: 15,

@@ -3,9 +3,18 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import styles from './styles';
 import {SocketContext} from "../../context/socket";
 
-const PickupCard = ({pickup, onClickPickup, onClickReject}) => {
+const PickupCard = ({pickup, onClickPickup, onClickReject, reject}) => {
 
     const socket = useContext(SocketContext);
+    const rejectButton = ()=>{
+        if(!reject){
+            return(
+            <TouchableOpacity style={styles.button} onPress={onClickReject}>
+            <Text style={styles.buttonText}>Reject</Text>
+            </TouchableOpacity>    
+            )
+        }
+    }
     return (
         <View style={styles.modalView} key={pickup._id}>
 
@@ -21,9 +30,8 @@ const PickupCard = ({pickup, onClickPickup, onClickReject}) => {
             <TouchableOpacity style={styles.button} onPress={onClickPickup}>
                 <Text style={styles.buttonText}>Accept</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={onClickReject}>
-                <Text style={styles.buttonText}>Reject</Text>
-            </TouchableOpacity>
+            
+            {rejectButton()}
         </View>
     );
 }

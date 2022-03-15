@@ -42,21 +42,25 @@ export default function Drawer() {
       <RootDrawerNavigator.Screen
         name='Dashboard'
         component={DashStack} 
-        options={({ navigation }) => {
-					return PrimaryHeader(navigation, "Dashboard");
-				}}/>
+        options={{headerShown: false}}/>
       <RootDrawerNavigator.Screen
         name='History'
         component={History}
-        options={{ headerShown: false }} />
+        options={({ navigation }) => {
+          return PrimaryHeader(navigation, "History");
+        }} />
       <RootDrawerNavigator.Screen
         name='Settings'
         component={Settings_screen} 
-        options={{ headerShown: false }}/>
+        options={({ navigation }) => {
+          return PrimaryHeader(navigation, "Settings");
+        }}/>
       <RootDrawerNavigator.Screen
         name='Support'
         component={Support} 
-        options={{ headerShown: false }}/>
+        options={({ navigation }) => {
+          return PrimaryHeader(navigation, "Support");
+        }}/>
     </RootDrawerNavigator.Navigator>
 
   );

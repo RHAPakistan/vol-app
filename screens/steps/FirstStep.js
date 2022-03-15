@@ -1,19 +1,20 @@
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Text, View, Image, Button, Icon, SafeAreaView, TouchableOpacity, Picker } from 'react-native';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { styles } from "./styles";
+import { styles } from "../styles";
 import ModalDropdown from "react-native-modal-dropdown";
-import { socket } from "../context/socket";
-import PickupDetails from "../components/DetailsForm/PickupDetails"
-import ActionBox from "../components/ActionBox";
-import ProgressBar from "../components/ProgressBar";
-import {SocketContext} from "../context/socket";
-const volunteerApi = require("../helpers/volunteerApi");
+import { socket } from "../../context/socket";
+import PickupDetails from "../../components/DetailsForm/PickupDetails"
+import ActionBox from "../../components/ActionBox";
+import ProgressBar from "../../components/ProgressBar";
+import {SocketContext} from "../../context/socket";
+import GlobalStyles from "../../styles/GlobalStyles";
+const volunteerApi = require("../../helpers/volunteerApi");
 
-function SecondStep({ navigation, route }) {
+function FirstStep({ navigation, route }) {
 
     const socket = useContext(SocketContext);
-    const pickup = route.params.id;
+    const [pickup, setPickup] = React.useState(route.params.id);
     const [text, onChangeText] = React.useState("name");
     const [phone, onChangePhone] = React.useState("phone");
     const [displayText, setDisplayText] = React.useState(text);
@@ -37,6 +38,7 @@ function SecondStep({ navigation, route }) {
 		.catch((e)=>{
 			console.log(e);
 		})
+
 	},[])
     
     const cancelPickUp = () => {
@@ -62,13 +64,16 @@ function SecondStep({ navigation, route }) {
     };
     const proceed = () => {
         //emit message that food has been picked
+        console.log("TJAAA", pickup);
         socket.emit("foodPicked", {"message":pickup});
-        navigation.navigate("thirdstep", { pickup, current_provider});
+        navigation.navigate("secondstep", { pickup, current_provider});
     }
     return (
         <ScrollView>
-            <SafeAreaView style={styles.containerDashboard}>
-
+            <SafeAreaView style={styles.containerDashboard} >
+                <View style={GlobalStyles.screenTitle}>
+                    <Text style = {GlobalStyles.screenTitleText}>First Step</Text>
+                </View>
                 <ProgressBar active={1} message="This pickup is your responsibility now" />
 
                 <View style={{ flex: 1 }}>
@@ -84,11 +89,11 @@ function SecondStep({ navigation, route }) {
                         title='Cancel Pickup'
                         action={cancelPickUp}
                     />
-                    <ActionBox
+                    {/* <ActionBox
                         type='primary'
                         title='Go ahead'
                         action={() => { navigation.navigate("finalstep") }}
-                    />
+                    /> */}
                 </View>
 
 
@@ -97,4 +102,4 @@ function SecondStep({ navigation, route }) {
     );
 }
 
-export default SecondStep;
+export default FirstStep;

@@ -1,15 +1,16 @@
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Text, View, Image, Button, Icon,SafeAreaView, TouchableOpacity, Picker} from 'react-native';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { styles } from "./styles";
+import { styles } from "../styles";
 import ModalDropdown from "react-native-modal-dropdown";
-import { socket } from "../context/socket";
-import PickupDetails from "../components/DetailsForm/PickupDetails"
-import ActionBox from "../components/ActionBox/";
-import ProgressBar from "../components/ProgressBar";
-import {SocketContext} from "../context/socket";
+import { socket } from "../../context/socket";
+import PickupDetails from "../../components/DetailsForm/PickupDetails"
+import ActionBox from "../../components/ActionBox";
+import ProgressBar from "../../components/ProgressBar";
+import {SocketContext} from "../../context/socket";
+import GlobalStyles from "../../styles/GlobalStyles";
 
-function ThirdStep({navigation, route}) {
+function SecondStep({navigation, route}) {
 
     const socket = useContext(SocketContext);
     const pickup = route.params.pickup;
@@ -52,12 +53,15 @@ function ThirdStep({navigation, route}) {
         console.log("this was clicked!");
         pickup.status = 3
         socket.emit("finishPickup", {"message":pickup});
-        navigation.navigate("finalstep", {pickup, current_provider});
+        navigation.navigate("thirdstep", {pickup, current_provider});
         
     }
     return ( 
         <ScrollView>
-            <SafeAreaView>
+            <SafeAreaView style={styles.containerDashboard}>
+            <View style={GlobalStyles.screenTitle}>
+                <Text style={GlobalStyles.screenTitleText}>Second Step</Text>
+            </View>
             <ProgressBar active={2} message="The food has been picked" />
             <View style={{flex:1}}>
             <PickupDetails data={data}/>
@@ -71,15 +75,15 @@ function ThirdStep({navigation, route}) {
 					title='Cancel Pickup'
 					action={cancelPickUp}
 				/>    
-            <ActionBox
+            {/* <ActionBox
 					type='primary'
 					title='Go ahead'
-					action={()=>{navigation.navigate("finalstep")}}
-				/>               
+					action={()=>{navigation.navigate("thirdstep")}}
+				/>                */}
             </View> 
         </SafeAreaView>
         </ScrollView>
      );
 }
 
-export default ThirdStep;
+export default SecondStep;
