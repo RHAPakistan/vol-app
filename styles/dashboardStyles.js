@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 8,
         maxWidth: '97%',
-        maxHeight: '70%',
+        maxHeight: '80%',
         minHeight: '20%'
     },
     requestCard: {

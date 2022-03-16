@@ -1,9 +1,11 @@
-import React, { useContext } from "react";
-import { useState, useEffect } from "react";
-import { Text, View, SafeAreaView, TouchableOpacity, Alert, ScrollView} from 'react-native';
+import React, { useContext, useState, useEffect  } from "react";
+import { View, SafeAreaView, Alert} from 'react-native';
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { styles } from '../styles/dashboardStyles';
 import { SocketContext} from "../context/socket";
+import Drives from "../components/Drives";
+import Pickups from "../components/Pickups";
+
 
 export default function Dashboard({navigation}) {
   const socket = useContext(SocketContext);
@@ -51,7 +53,8 @@ export default function Dashboard({navigation}) {
       socket.off("assignPickup");
     }
   },[])
-  
+
+
   async function onClickPickup(pickup){
     Alert.alert(
       "Pickup",
@@ -80,58 +83,15 @@ export default function Dashboard({navigation}) {
   const onClickDrive = (drive) =>{
     navigation.navigate("driveDetails", {drive})
   }
-
   return ( 
     
     <SafeAreaView style={styles.container}>
-      <Text style={styles.requestText}>Active Pickup Requests</Text>
-      <ScrollView style={styles.requestScrollView}>        
-          {console.log(pickups)}
-          {pickups? 
-              pickups.map(pickup => (
-              <View style={styles.requestCard}  key={pickup._id}>
 
-                  <Text style={styles.requestHeader}>Pickup Loaction:</Text>
-                  <Text style={styles.detailsText}>{pickup.pickupAddress}</Text>
+      <Pickups pickups={pickups} onClickPickup={onClickPickup}></Pickups>
+      <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
 
-                  <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Dropoff Loaction:</Text>
-                  <Text style={styles.detailsText}>{pickup.deliveryAddress}</Text>
-
-                  <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Food Details:</Text>
-                  <Text style={styles.detailsText}>{pickup.description}</Text>
-
-                  <TouchableOpacity style={styles.button} onPress={()=>onClickPickup(pickup)}>
-                      <Text style={styles.buttonText}>Accept</Text>         
-                  </TouchableOpacity>
-              </View>
-          ))
-          :
-          <View><Text style={styles.nullText}>No pickup as of yet.</Text></View> 
-          }
-      </ScrollView>
-      <Text style={styles.requestText}>Drives Requests</Text>
-      <ScrollView style={styles.requestScrollView}>
-        {console.log(drives)}
-          {drives? 
-              drives.map(drive => (
-              <View style={styles.requestCard}  key={drive._id}>
-                  <Text style={styles.requestHeader}>Drive Location/Area:</Text>
-                  <Text style={styles.detailsText}>{drive.driveLocation}</Text>
-
-                  <Text style={styles.requestHeader}>Date and Time:</Text>
-                  <Text style={styles.detailsText}>{drive.date}</Text>
-                  
-                  <TouchableOpacity style={styles.button} onPress={()=>onClickDrive(drive)}>
-                      <Text style={styles.buttonText}>See Details</Text>         
-                  </TouchableOpacity>
-              </View>
-          ))
-          :
-          <View><Text style={styles.nullText}>No drive as of yet.</Text></View> 
-        }
-      </ScrollView>
       <View style={styles.footer}>
-          <Text>Footer here</Text>
+        
       </View>            
     </SafeAreaView>
 
