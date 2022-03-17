@@ -121,8 +121,8 @@ module.exports = {
     },
     
     getDrives: async()=>{
-        const token = await SecureStore.getItemAsync('auth_token');
-        const volunteer_id = await SecureStore.getItemAsync('volunteer_id');
+        const token = await localStorage.getData('auth_token');
+        const volunteer_id = await localStorage.getData('volunteer_id');
         const resp = await fetch(API_URL.concat(`/api/volunteer/getDrives/${volunteer_id}`), {
             method: 'GET',
             headers: {
@@ -145,8 +145,8 @@ module.exports = {
     },
 
     acceptDrive: async(id)=>{
-        const token = await SecureStore.getItemAsync('auth_token');
-        const volunteer_id = await SecureStore.getItemAsync('volunteer_id');
+        const token = await localStorage.getData('auth_token');
+        const volunteer_id = await localStorage.getData('volunteer_id');
         const resp = await fetch(API_URL.concat(`/api/volunteer/enrollDrive/${id}`), {
             method: 'PATCH',
             headers: {
