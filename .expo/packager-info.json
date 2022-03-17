@@ -1,10 +1,10 @@
 {
-  "devToolsPort": 19004,
-  "expoServerPort": 19001,
-  "packagerPort": 19001,
+  "devToolsPort": 19003,
+  "expoServerPort": 19000,
+  "packagerPort": 19000,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://4z-cun.anonymous.vol-app.exp.direct",
+  "packagerNgrokUrl": "https://4z-cun.anonymous.vol-app.exp.direct",
+  "ngrokPid": 107225,
   "webpackServerPort": null
 }
