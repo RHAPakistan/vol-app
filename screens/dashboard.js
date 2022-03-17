@@ -12,10 +12,12 @@ const volunteerApi = require("../helpers/volunteerApi.js");
 import { SocketContext } from "../context/socket";
 import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
+import Drives from "../components/Drives";
 
 export default function Dashboard({ navigation }) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
+  const [drives, setDrives] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [popPickup, setPopPickup] = useState({
     "_id": 1,
@@ -37,6 +39,19 @@ export default function Dashboard({ navigation }) {
         setData(response);
       })
       .catch((e) => {
+        console.log(e);
+      })
+
+      const fetchDrives = async()=>{
+        const resp = await volunteerApi.getDrives();
+        return resp.drives;
+      }
+      fetchDrives()
+      .then((response)=>{
+        console.log(response);
+        setDrives(response);
+      })
+      .catch((e)=>{
         console.log(e);
       })
 
@@ -95,6 +110,10 @@ export default function Dashboard({ navigation }) {
     socket.emit("broadcastPickup", { "message": popPickup });
     setModalVisible(!modalVisible);
   }
+
+  const onClickDrive = (drive) =>{
+    navigation.navigate("driveDetails", {drive})
+  }
   return (
     <SafeAreaView style={styles.containerDashboard}>
 
@@ -107,7 +126,7 @@ export default function Dashboard({ navigation }) {
         <PickupCard key = {item._id} pickup={item} onClickPickup={()=>{onClick(item)}} onClickReject={onClickReject} reject={true} />
       ))
       }
-
+      <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
     </SafeAreaView>
   );
 }

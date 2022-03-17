@@ -47,6 +47,10 @@ export default function DashStack({navigation}) {
                 name = "contact"
                 component = {Contact}
                 />
+            <Stack.Screen 
+                    name= "driveDetails"
+                    component={Drive}
+                />
           </Stack.Navigator>
          );
     }
