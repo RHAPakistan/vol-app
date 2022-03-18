@@ -1,6 +1,8 @@
-import * as SecureStore from 'expo-secure-store';
+import { concat } from 'react-native-reanimated';
+import { retrySymbolicateLogNow } from 'react-native/Libraries/LogBox/Data/LogBoxData';
 import {API_URL} from "../config.json";
 import {initiateSocketConnection} from "../context/socket";
+const localStorage = require("./localStorage");
 
 module.exports = {
     //this funtion returns true if the user is valid else false
@@ -29,23 +31,16 @@ module.exports = {
         })
         .then(async (json) => {
             console.log("succesful network request");
-            // console.log(json.status);
-            // if (response.status==200){
-            //     console.log("200")
-            //     var json = await response.json()
-            // }
-            //console.log(json);
-            
             if (json){
-                await SecureStore.setItemAsync('auth_token',json.token);
-                await SecureStore.setItemAsync('volunteer_id',json._id);
+                await localStorage.storeData('auth_token',json.token);
+                await localStorage.storeData('volunteer_id',json._id);
+                await localStorage.storeData('fullName', json.fullName);
+                await localStorage.storeData('phone', json.contactNumber);
                 initiateSocketConnection()
                 return true
             }else{
                 return false
             }
-            // const token = await SecureStore.getItemAsync('auth_token');
-            // console.log(token);
         })
         .catch((e) => {
             console.log(e);
@@ -55,7 +50,7 @@ module.exports = {
     },
 
     get_pickups: async () =>{
-        const token = await SecureStore.getItemAsync('auth_token');
+        const token = await localStorage.getData('auth_token');
         const resp = await fetch(API_URL.concat("/api/volunteer/getPickups"), {
             method: 'GET',
             headers: {
@@ -77,12 +72,32 @@ module.exports = {
         })
     return resp;
     },
+    get_provider: async(id) =>{
+        const resp = await fetch(API_URL.concat(`/api/admin/provider/${id}`),{
+            method: 'GET',
+            headers:{
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response)=>{
+            return response.json();
+        })
+        .then((json)=>{
+            return json
+        })
+        .catch((e)=>{
+            console.log(e);
+            console.log("error!");
+        })
+    return resp;
+    },
 
     //this function returns either broadcasted pickups or the ones assigned
     //to the volunteer
     get_pickups_by_vol_id: async()=>{
-        const token = await SecureStore.getItemAsync('auth_token');
-        const id = await SecureStore.getItemAsync('volunteer_id');
+        const token = await localStorage.getData('auth_token');
+        const id = await localStorage.getData('volunteer_id');
         const resp = await fetch(API_URL.concat(`/api/volunteer/pickups/vol_id/${id}`), {
             method: 'GET',
             headers: {
@@ -102,12 +117,12 @@ module.exports = {
             console.log(e);
             console.log("error");
         })
-        return resp;
+    return resp;
     },
-
+    
     getDrives: async()=>{
-        const token = await SecureStore.getItemAsync('auth_token');
-        const volunteer_id = await SecureStore.getItemAsync('volunteer_id');
+        const token = await localStorage.getData('auth_token');
+        const volunteer_id = await localStorage.getData('volunteer_id');
         const resp = await fetch(API_URL.concat(`/api/volunteer/getDrives/${volunteer_id}`), {
             method: 'GET',
             headers: {
@@ -130,8 +145,8 @@ module.exports = {
     },
 
     acceptDrive: async(id)=>{
-        const token = await SecureStore.getItemAsync('auth_token');
-        const volunteer_id = await SecureStore.getItemAsync('volunteer_id');
+        const token = await localStorage.getData('auth_token');
+        const volunteer_id = await localStorage.getData('volunteer_id');
         const resp = await fetch(API_URL.concat(`/api/volunteer/enrollDrive/${id}`), {
             method: 'PATCH',
             headers: {
@@ -156,7 +171,7 @@ module.exports = {
         })
         return resp;
     }
-    
+
     // createPickup: async (pickup_object) =>{
     //     var tok = await SecureStore.getItemAsync("auth_token");
     //     var token = concat("Token ",tok);

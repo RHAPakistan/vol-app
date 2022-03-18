@@ -12,11 +12,11 @@ export const styles = StyleSheet.create({
     containerDashboard: {
       flex: 1,
       backgroundColor: '#F0F0F0',
-      alignItems: 'flex-start',
-      justifyContent: 'flex-start',
+      // alignItems: 'center',
+      // justifyContent: 'flex-start',
       paddingTop:50,
-      paddingLeft: 15,
-      paddingRight: 15
+      paddingLeft: 5,
+      paddingRight: 5
     },
     text: {
       color: 'white',
@@ -82,5 +82,47 @@ export const styles = StyleSheet.create({
     },
     buttonsContainer: {
       marginBottom: '10'
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 22
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    buttonOpen: {
+      backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+      backgroundColor: "#2196F3",
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center"
+    },
+    heading: {
+      color: "green",
+      fontWeight: "bold",
+      textAlign: "center",
+      fontSize: 20
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: "center"
     }
   });

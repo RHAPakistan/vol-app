@@ -6,7 +6,7 @@ import { styles } from "../styles/dashboardStyles";
 export default Pickups = ({pickups, onClickPickup}) =>{
 
     return (
-        <View >
+        <View style={styles.container}>
             <Text style={styles.requestText}>Active Pickup Requests</Text>
             <ScrollView style={styles.requestScrollView}>        
                 {pickups? 

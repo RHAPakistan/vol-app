@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "provider-app",
-    "slug": "provider-app",
+    "name": "volunteer-app",
+    "slug": "volunteer-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

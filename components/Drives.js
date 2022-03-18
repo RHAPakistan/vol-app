@@ -6,7 +6,7 @@ import { styles } from "../styles/dashboardStyles";
 export default Drives = ({drives, onClickDrive}) =>{
     
     return (
-        <View >
+        <View style={styles.container}>
             <Text style={styles.requestText}>Drives Requests</Text>
             <ScrollView style={styles.requestScrollView}>
                 {drives? 
