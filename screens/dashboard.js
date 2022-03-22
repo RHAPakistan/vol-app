@@ -87,7 +87,7 @@ export default function Dashboard({ navigation }) {
             console.log("pickup accepted");
             //change the status to 2 (accepted)
             id.status = 2
-            socket.emit("acceptPickup", { "message": id })
+            .emit("acceptPickup", { "message": id })
             navigation.navigate("firststep", { id });
           }
         },
