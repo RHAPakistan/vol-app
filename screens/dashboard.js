@@ -13,12 +13,14 @@ import { SocketContext } from "../context/socket";
 import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
+import localStorage from "../helpers/localStorage";
 
 export default function Dashboard({ navigation }) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
   const [drives, setDrives] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [vol_id, setVolid] = useState("");
   const [popPickup, setPopPickup] = useState({
     "_id": 1,
     "pickupAdress": "iba karachi",
@@ -32,11 +34,15 @@ export default function Dashboard({ navigation }) {
     const fetchData = async () => {
       const resp = await volunteerApi.get_pickups_by_vol_id();
       // console.log("The pickups are ",resp.pickups);
-      return resp.pickups;
+      const volunteer_id = await localStorage.getData("volunteer_id");
+      console.log(volunteer_id);
+      return [volunteer_id, resp.pickups];
     }
     fetchData()
       .then((response) => {
-        setData(response);
+        var [volunteer_id, pickups] = response;
+        setData(pickups);
+        setVolid(volunteer_id);
       })
       .catch((e) => {
         console.log(e);
@@ -87,6 +93,8 @@ export default function Dashboard({ navigation }) {
             console.log("pickup accepted");
             //change the status to 2 (accepted)
             id.status = 2
+            id.volunteer = vol_id;
+            console.log(id);
             socket.emit("acceptPickup", { "message": id })
             navigation.navigate("firststep", { id });
           }
