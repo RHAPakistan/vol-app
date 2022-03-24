@@ -8,8 +8,9 @@ export default Drives = ({drives, onClickDrive}) =>{
     return (
         <View >
             <Text style={styles.requestText}>Drives Requests</Text>
+            <View style={styles.lineStyle}/>
             <ScrollView style={styles.requestScrollView}>
-                {drives? 
+                {drives.length!=0? 
                     drives.map(drive => (
                     <View style={styles.requestCard}  key={drive._id}>
                         <Text style={styles.requestHeader}>Drive Location/Area:</Text>
@@ -24,7 +25,9 @@ export default Drives = ({drives, onClickDrive}) =>{
                     </View>
                 ))
                 :
-                <View><Text style={styles.nullText}>No drive as of yet.</Text></View> 
+                <View><Text style={styles.nullText}>No drive as of yet.</Text>
+                            <View style={styles.lineStyle}/></View> 
+                
                 }
             </ScrollView>
         </View>

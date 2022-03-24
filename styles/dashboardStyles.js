@@ -38,7 +38,8 @@ export const styles = StyleSheet.create({
     nullText:{
         fontWeight: 'bold',
         fontSize: 16,
-        margin: '5%'
+        margin: '5%',
+        alignItems: "center"
     },
     requestText:{
         fontSize: 18,
@@ -48,7 +49,7 @@ export const styles = StyleSheet.create({
     },
     requestScrollView:{
         marginTop: '2%',
-        backgroundColor: '#fff',
+        backgroundColor: '#F0F0F0',
         borderRadius: 8,
         maxWidth: '97%',
         maxHeight: '80%',
@@ -73,5 +74,10 @@ export const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: '#fff'
     },
+    lineStyle:{
+        borderWidth: 0.5,
+        borderColor:'black',
+        margin:10,
+   }
     
 });

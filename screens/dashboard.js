@@ -14,6 +14,7 @@ import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
+import Pickups from "../components/Pickups";
 
 export default function Dashboard({ navigation }) {
   const socket = useContext(SocketContext);
@@ -48,16 +49,16 @@ export default function Dashboard({ navigation }) {
         console.log(e);
       })
 
-      const fetchDrives = async()=>{
-        const resp = await volunteerApi.getDrives();
-        return resp.drives;
-      }
-      fetchDrives()
-      .then((response)=>{
+    const fetchDrives = async () => {
+      const resp = await volunteerApi.getDrives();
+      return resp.drives;
+    }
+    fetchDrives()
+      .then((response) => {
         console.log(response);
         setDrives(response);
       })
-      .catch((e)=>{
+      .catch((e) => {
         console.log(e);
       })
 
@@ -119,21 +120,24 @@ export default function Dashboard({ navigation }) {
     setModalVisible(!modalVisible);
   }
 
-  const onClickDrive = (drive) =>{
-    navigation.navigate("driveDetails", {drive})
+  const onClickDrive = (drive) => {
+    navigation.navigate("driveDetails", { drive })
   }
   return (
     <SafeAreaView style={styles.containerDashboard}>
 
-      <Text style = {styles.heading} >Pickups</Text>
+      <Text style={styles.heading} >Pickups</Text>
+      <View style={styles.lineStyle} />
       <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible}
         pickup={popPickup} onClickPickup={onClick} onClickReject={onClickReject} />
 
       {/* get pickups */}
-      {data.map((item) => (
-        <PickupCard key = {item._id} pickup={item} onClickPickup={()=>{onClick(item)}} onClickReject={onClickReject} reject={true} />
+      {data.length != 0 ? data.map((item) => (
+        <PickupCard key={item._id} pickup={item} onClickPickup={() => { onClick(item) }} onClickReject={onClickReject} reject={true} />
       ))
-      }
+        :
+        <Text style={styles.bodyText}>No pickups yet</Text>}
+      <View style={styles.lineStyle} />
       <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
     </SafeAreaView>
   );
