@@ -43,7 +43,7 @@ export default function Drawer() {
         name='Dashboard'
         component={DashStack} 
         options={{headerShown: false}}/>
-      <RootDrawerNavigator.Screen
+      {/* <RootDrawerNavigator.Screen
         name='History'
         component={History}
         options={({ navigation }) => {
@@ -60,7 +60,7 @@ export default function Drawer() {
         component={Support} 
         options={({ navigation }) => {
           return PrimaryHeader(navigation, "Support");
-        }}/>
+        }}/> */}
     </RootDrawerNavigator.Navigator>
 
   );

@@ -40,4 +40,9 @@ export const styles = StyleSheet.create({
         paddingLeft: 10,
         color: '#FFFFFF',
     },
+    lineStyle:{
+        borderWidth: 0.5,
+        borderColor:'black',
+        margin:10,
+   }
 });

@@ -12,8 +12,6 @@ export const styles = StyleSheet.create({
     containerDashboard: {
       flex: 1,
       backgroundColor: '#F0F0F0',
-      // alignItems: 'center',
-      // justifyContent: 'flex-start',
       paddingTop:50,
       paddingLeft: 5,
       paddingRight: 5
@@ -121,8 +119,18 @@ export const styles = StyleSheet.create({
       textAlign: "center",
       fontSize: 20
     },
+    bodyText: {
+      color:"black",
+      textAlign: "center",
+      fontSize: 15
+    },
     modalText: {
       marginBottom: 15,
       textAlign: "center"
-    }
+    },
+    lineStyle:{
+      borderWidth: 0.5,
+      borderColor:'black',
+      margin:10,
+ }
   });

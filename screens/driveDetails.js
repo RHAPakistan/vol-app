@@ -4,11 +4,9 @@ import { Text, View, SafeAreaView, TouchableOpacity, Alert, ScrollView, TextInpu
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { styles } from '../styles/driveStyles';
 
-export default Drive = ({navigation, route})  =>{
+const driveDetails = ({navigation, route})  =>{
     const drive = route.params.drive;
     console.log("Drive ", drive);
-
-
     const acceptDrive = async()=>{
         const res = await volunteerApi.acceptDrive(drive._id);
         return res;
@@ -25,7 +23,7 @@ export default Drive = ({navigation, route})  =>{
                 acceptDrive()
                 .then((response)=>{
                     alert(response.message);
-                    navigation.navigate("dashboard");
+                    navigation.navigate("dashboard", {driveDataChanged: !route.params.driveDataChanged});
                 })
                 .catch((e)=>{
                     console.log(e);
@@ -99,3 +97,4 @@ export default Drive = ({navigation, route})  =>{
         </SafeAreaView>
     );
 }
+export default driveDetails;

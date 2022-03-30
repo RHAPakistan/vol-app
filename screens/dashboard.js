@@ -2,23 +2,20 @@ import React, { useContext } from "react";
 import { Component, useState, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from "./styles";
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from "./home";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Geolocation from 'react-native-geolocation-service';
-import PickupList from '../components/PickupList/';
+import { StackActions } from "@react-navigation/native";
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { SocketContext } from "../context/socket";
 import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
+import localStorage from "../helpers/localStorage";
 
-export default function Dashboard({ navigation }) {
+export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
   const [drives, setDrives] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [vol_id, setVolid] = useState("");
   const [popPickup, setPopPickup] = useState({
     "_id": 1,
     "pickupAdress": "iba karachi",
@@ -32,26 +29,30 @@ export default function Dashboard({ navigation }) {
     const fetchData = async () => {
       const resp = await volunteerApi.get_pickups_by_vol_id();
       // console.log("The pickups are ",resp.pickups);
-      return resp.pickups;
+      const volunteer_id = await localStorage.getData("volunteer_id");
+      console.log(volunteer_id);
+      return [volunteer_id, resp.pickups];
     }
     fetchData()
       .then((response) => {
-        setData(response);
+        var [volunteer_id, pickups] = response;
+        setData(pickups);
+        setVolid(volunteer_id);
       })
       .catch((e) => {
         console.log(e);
       })
 
-      const fetchDrives = async()=>{
-        const resp = await volunteerApi.getDrives();
-        return resp.drives;
-      }
-      fetchDrives()
-      .then((response)=>{
+    const fetchDrives = async () => {
+      const resp = await volunteerApi.getDrives();
+      return resp.drives;
+    }
+    fetchDrives()
+      .then((response) => {
         console.log(response);
         setDrives(response);
       })
-      .catch((e)=>{
+      .catch((e) => {
         console.log(e);
       })
 
@@ -69,12 +70,32 @@ export default function Dashboard({ navigation }) {
       setPopPickup(sock_data.message);
       setModalVisible(!modalVisible);
     })
+
+    socket.on("informCancelPickup", (socket_data)=>{
+      console.log("Pickup cancelled here", socket_data.pickup);
+      setData((prevState)=>{
+        var data_copy = [...prevState];
+        console.log("current ", data_copy);
+        for( var i = 0; i < data_copy.length; i++){ 
+          if ( data_copy[i]._id === socket_data.pickup._id) { 
+            console.log("remove this");
+            data_copy.splice(i, 1); 
+            console.log(data_copy);
+            return(data_copy);
+            break;
+          }
+        
+        }
+        return(data_copy);
+      })
+  })
     return () => {
       console.log("turning off socket on assignPickup ");
       socket.off("assignPickup");
       socket.off("assignPickupSpecific");
+      socket.off("informCancelPickup");
     }
-  }, [])
+  }, [route.params.driveDataChanged])
 
   async function onClick(id) {
     Alert.alert(
@@ -87,8 +108,13 @@ export default function Dashboard({ navigation }) {
             console.log("pickup accepted");
             //change the status to 2 (accepted)
             id.status = 2
-            .emit("acceptPickup", { "message": id })
-            navigation.navigate("firststep", { id });
+            id.volunteer = vol_id;
+            console.log(id);
+            socket.emit("acceptPickup", { "message": id })
+            navigation.dispatch(
+              StackActions.replace('firststep', {id})
+            )
+            // navigation.navigate("firststep", { id });
           }
         },
         {
@@ -112,20 +138,23 @@ export default function Dashboard({ navigation }) {
   }
 
   const onClickDrive = (drive) =>{
-    navigation.navigate("driveDetails", {drive})
+    navigation.navigate("driveDetails", {drive, driveDataChanged: route.params.driveDataChanged})
   }
   return (
     <SafeAreaView style={styles.containerDashboard}>
 
-      <Text style = {styles.heading} >Pickups</Text>
+      <Text style={styles.heading} >Pickups</Text>
+      <View style={styles.lineStyle} />
       <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible}
         pickup={popPickup} onClickPickup={onClick} onClickReject={onClickReject} />
 
       {/* get pickups */}
-      {data.map((item) => (
-        <PickupCard key = {item._id} pickup={item} onClickPickup={()=>{onClick(item)}} onClickReject={onClickReject} reject={true} />
+      {data.length != 0 ? data.map((item) => (
+        <PickupCard key={item._id} pickup={item} onClickPickup={() => { onClick(item) }} onClickReject={onClickReject} reject={true} />
       ))
-      }
+        :
+        <Text style={styles.bodyText}>No pickups yet</Text>}
+      <View style={styles.lineStyle} />
       <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
     </SafeAreaView>
   );
