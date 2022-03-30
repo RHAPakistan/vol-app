@@ -70,16 +70,6 @@ function SecondStep({navigation, route}) {
 					title='Food Delivered'
 					action={proceed}
 				/>
-            <ActionBox
-					type='cancel'
-					title='Cancel Pickup'
-					action={cancelPickUp}
-				/>    
-            {/* <ActionBox
-					type='primary'
-					title='Go ahead'
-					action={()=>{navigation.navigate("thirdstep")}}
-				/>                */}
             </View> 
         </SafeAreaView>
         </ScrollView>
@@ -87,3 +77,4 @@ function SecondStep({navigation, route}) {
 }
 
 export default SecondStep;
+

@@ -2,19 +2,13 @@ import React, { useContext } from "react";
 import { Component, useState, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from "./styles";
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from "./home";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Geolocation from 'react-native-geolocation-service';
-import PickupList from '../components/PickupList/';
+import { StackActions } from "@react-navigation/native";
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { SocketContext } from "../context/socket";
 import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
-import Pickups from "../components/Pickups";
 
 export default function Dashboard({ navigation }) {
   const socket = useContext(SocketContext);
@@ -76,10 +70,30 @@ export default function Dashboard({ navigation }) {
       setPopPickup(sock_data.message);
       setModalVisible(!modalVisible);
     })
+
+    socket.on("informCancelPickup", (socket_data)=>{
+      console.log("Pickup cancelled here", socket_data.pickup);
+      setData((prevState)=>{
+        var data_copy = [...prevState];
+        console.log("current ", data_copy);
+        for( var i = 0; i < data_copy.length; i++){ 
+          if ( data_copy[i]._id === socket_data.pickup._id) { 
+            console.log("remove this");
+            data_copy.splice(i, 1); 
+            console.log(data_copy);
+            return(data_copy);
+            break;
+          }
+        
+        }
+        return(data_copy);
+      })
+  })
     return () => {
       console.log("turning off socket on assignPickup ");
       socket.off("assignPickup");
       socket.off("assignPickupSpecific");
+      socket.off("informCancelPickup");
     }
   }, [])
 
@@ -97,7 +111,10 @@ export default function Dashboard({ navigation }) {
             id.volunteer = vol_id;
             console.log(id);
             socket.emit("acceptPickup", { "message": id })
-            navigation.navigate("firststep", { id });
+            navigation.dispatch(
+              StackActions.replace('firststep', {id})
+            )
+            // navigation.navigate("firststep", { id });
           }
         },
         {

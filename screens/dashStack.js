@@ -7,8 +7,8 @@ import HomeScreen from "./home";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Dashboard from "./dashboard";
-import SecondStep from "./steps/SecondStep";
-import ThirdStep from "./steps/ThirdStep";
+// import SecondStep from "./steps/SecondStep";
+// import ThirdStep from "./steps/ThirdStep";
 import Contact from "./contact";
 import PrimaryHeader from "../components/ScreenHeaders/PrimaryHeader";
 import FirstStep from "./steps/FirstStep";
@@ -18,8 +18,6 @@ export default function DashStack({ navigation }) {
 
   const Stack = createNativeStackNavigator();
 
-  function onClick() {
-  }
   return (
     <Stack.Navigator >
       <Stack.Screen
@@ -34,7 +32,7 @@ export default function DashStack({ navigation }) {
         component={FirstStep}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="secondstep"
         component={SecondStep}
         options={{ headerShown: false }}
@@ -43,7 +41,7 @@ export default function DashStack({ navigation }) {
         name="thirdstep"
         component={ThirdStep}
         options={{ headerShown: false }}
-      />
+      /> */}
       <Stack.Screen
         name="contact"
         component={Contact}
