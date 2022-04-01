@@ -13,6 +13,7 @@ import Contact from "./contact";
 import PrimaryHeader from "../components/ScreenHeaders/PrimaryHeader";
 import FirstStep from "./steps/FirstStep";
 import Drive from "../components/Drives";
+import driveDetails from './driveDetails';
 
 export default function DashStack({ navigation }) {
 
@@ -23,6 +24,7 @@ export default function DashStack({ navigation }) {
       <Stack.Screen
         name="dashboard"
         component={Dashboard}
+        initialParams={{ driveDataChanged: false }}
         options={({ navigation }) => {
           return PrimaryHeader(navigation, "Dashboard");
         }}
@@ -49,6 +51,10 @@ export default function DashStack({ navigation }) {
       <Stack.Screen
         name="driveDetails"
         component={Drive}
+        />
+      <Stack.Screen 
+          name= "driveDetails"
+          component={driveDetails}
       />
     </Stack.Navigator>
   );

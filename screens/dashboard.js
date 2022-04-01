@@ -10,7 +10,7 @@ import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
 
-export default function Dashboard({ navigation }) {
+export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
   const [data, setData] = useState([]);
   const [drives, setDrives] = useState([]);
@@ -95,7 +95,7 @@ export default function Dashboard({ navigation }) {
       socket.off("assignPickupSpecific");
       socket.off("informCancelPickup");
     }
-  }, [])
+  }, [route.params.driveDataChanged])
 
   async function onClick(id) {
     Alert.alert(
@@ -137,8 +137,8 @@ export default function Dashboard({ navigation }) {
     setModalVisible(!modalVisible);
   }
 
-  const onClickDrive = (drive) => {
-    navigation.navigate("driveDetails", { drive })
+  const onClickDrive = (drive) =>{
+    navigation.navigate("driveDetails", {drive, driveDataChanged: route.params.driveDataChanged})
   }
   return (
     <SafeAreaView style={styles.containerDashboard}>
