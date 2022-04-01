@@ -75,7 +75,7 @@ function FirstStep({ navigation, route }) {
         pickup.broadcast = true;
         pickup.status = 1;
         delete pickup.volunteer;
-        socket.emit("cancelPickup", { "pickup": pickup,"status":2,"role":"volunteer"});
+        socket.emit("cancelPickup", { pickup: pickup,status:2,role:"volunteer"});
         navigation.navigate("dashboard");
     }
 
