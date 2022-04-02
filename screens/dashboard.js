@@ -157,6 +157,7 @@ export default function Dashboard({ navigation, route }) {
       socket.off("assignPickup");
       socket.off("assignPickupSpecific");
       socket.off("informCancelPickup");
+      socket.off("informCancelVolunteer");
 		});
 		const unsub = () => {
 			console.log("remove all listeners");

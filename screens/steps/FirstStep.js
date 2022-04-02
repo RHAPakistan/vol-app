@@ -118,7 +118,7 @@ function FirstStep({ navigation, route }) {
         //emit food delivered -> finishPickup
         //change status to 3 (completed)
         console.log("this was clicked!");
-        pickup.status = 3
+        pickup.status = 4
         socket.emit("finishPickup", { "message": pickup });
         setProgressCount(3);
         setTitle("Finished");
