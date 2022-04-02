@@ -73,20 +73,14 @@ export default function Dashboard({ navigation, route }) {
 
     socket.on("informCancelPickup", (socket_data)=>{
       console.log("Pickup cancelled here", socket_data.pickup);
-      setData((prevState)=>{
-        var data_copy = [...prevState];
-        console.log("current ", data_copy);
-        for( var i = 0; i < data_copy.length; i++){ 
-          if ( data_copy[i]._id === socket_data.pickup._id) { 
-            console.log("remove this");
-            data_copy.splice(i, 1); 
-            console.log(data_copy);
-            return(data_copy);
-            break;
-          }
-        
-        }
-        return(data_copy);
+      fetchData()
+      .then((response) => {
+        var [volunteer_id, pickups] = response;
+        setData(pickups);
+        setVolid(volunteer_id);
+      })
+      .catch((e) => {
+        console.log(e);
       })
   })
     return () => {
