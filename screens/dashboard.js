@@ -25,23 +25,23 @@ export default function Dashboard({ navigation, route }) {
 
   useEffect(() => {
     //get all pickups with status code 1
-    // console.log("dashboard screen mounted");
-    // const fetchData = async () => {
-    //   const resp = await volunteerApi.get_pickups_by_vol_id();
-    //   // console.log("The pickups are ",resp.pickups);
-    //   const volunteer_id = await localStorage.getData("volunteer_id");
-    //   console.log(volunteer_id);
-    //   return [volunteer_id, resp.pickups];
-    // }
-    // fetchData()
-    //   .then((response) => {
-    //     var [volunteer_id, pickups] = response;
-    //     setData(pickups);
-    //     setVolid(volunteer_id);
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //   })
+    console.log("dashboard screen mounted");
+    const fetchData = async () => {
+      const resp = await volunteerApi.get_pickups_by_vol_id();
+      // console.log("The pickups are ",resp.pickups);
+      const volunteer_id = await localStorage.getData("volunteer_id");
+      console.log(volunteer_id);
+      return [volunteer_id, resp.pickups];
+    }
+    fetchData()
+      .then((response) => {
+        var [volunteer_id, pickups] = response;
+        setData(pickups);
+        setVolid(volunteer_id);
+      })
+      .catch((e) => {
+        console.log(e);
+      })
 
     const fetchDrives = async () => {
       const resp = await volunteerApi.getDrives();
@@ -58,116 +58,44 @@ export default function Dashboard({ navigation, route }) {
 
     //listen for any newly broadcasted or unicasted pickups
 
-  //   console.log("Listening for assign Pickup at dashboard:35");
-  //   socket.on("assignPickup", (sock_data) => {
-  //     console.log("Received assignPickup message")
-  //     data.push(sock_data.message);
-  //     setData(data);
-  //   })
+    console.log("Listening for assign Pickup at dashboard:35");
+    socket.on("assignPickup", (sock_data) => {
+      console.log("Received assignPickup message")
+      data.push(sock_data.message);
+      setData(data);
+    })
 
-  //   socket.on("assignPickupSpecific", (sock_data) => {
-  //     console.log("Received specific pickup", sock_data.message);
-  //     setPopPickup(sock_data.message);
-  //     setModalVisible(!modalVisible);
-  //   })
+    socket.on("assignPickupSpecific", (sock_data) => {
+      console.log("Received specific pickup", sock_data.message);
+      setPopPickup(sock_data.message);
+      setModalVisible(!modalVisible);
+    })
 
-  //   socket.on("informCancelPickup", (socket_data)=>{
-  //     console.log("Pickup cancelled here", socket_data.pickup);
-  //     fetchData()
-  //     .then((response) => {
-  //       var [volunteer_id, pickups] = response;
-  //       setData(pickups);
-  //       setVolid(volunteer_id);
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     })
-  // })
-  }, [route.params.driveDataChanged])
-
-	useEffect(() => {
-
-		const onMount = navigation.addListener('focus', () => {
-			// The screen is focused
-			// Call any action and update data
-      console.log("dashboard screen mounted");
-      const fetchData = async () => {
-        const resp = await volunteerApi.get_pickups_by_vol_id();
-        // console.log("The pickups are ",resp.pickups);
-        const volunteer_id = await localStorage.getData("volunteer_id");
-        console.log(volunteer_id);
-        return [volunteer_id, resp.pickups];
-      }
-      fetchData()
-        .then((response) => {
-          var [volunteer_id, pickups] = response;
-          setData(pickups);
-          setVolid(volunteer_id);
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-        console.log("Listening for assign Pickup at dashboard:35");
-        socket.on("assignPickup", (sock_data) => {
-          console.log("Received assignPickup message");
-          setData((prevState)=>{
-            var pic = [...prevState];
-            pic.push(sock_data.message);
-            return pic;
-          });
-        })
-    
-        socket.on("assignPickupSpecific", (sock_data) => {
-          console.log("Received specific pickup", sock_data.message);
-          setPopPickup(sock_data.message);
-          setModalVisible(!modalVisible);
-        })
-    
-        socket.on("informCancelPickup", (socket_data)=>{
-          console.log("Pickup cancelled here", socket_data.pickup);
-          //incase modal is on then turn it off, cuz the pickup is no more.
-          setModalVisible(false);
-          fetchData()
-          .then((response) => {
-            var [volunteer_id, pickups] = response;
-            setData(pickups);
-            setVolid(volunteer_id);
-          })
-          .catch((e) => {
-            console.log(e);
-          })
+    socket.on("informCancelPickup", (socket_data)=>{
+      console.log("Pickup cancelled here", socket_data.pickup);
+      setData((prevState)=>{
+        var data_copy = [...prevState];
+        console.log("current ", data_copy);
+        for( var i = 0; i < data_copy.length; i++){ 
+          if ( data_copy[i]._id === socket_data.pickup._id) { 
+            console.log("remove this");
+            data_copy.splice(i, 1); 
+            console.log(data_copy);
+            return(data_copy);
+            break;
+          }
+        
+        }
+        return(data_copy);
       })
-
-      socket.on("informCancelVolunteer",(socket_data)=>{
-        console.log(`pickup cancelled by ${socket_data.role}`);
-        fetchData()
-        .then((response) => {
-          var [volunteer_id, pickups] = response;
-          setData(pickups);
-          setVolid(volunteer_id);
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-      })
-		});
-
-		const onUnmount = navigation.addListener('blur', ()=>{
-      console.log("turning off socket: assignPickup | assignPickupSpecific | informCancelPickup");
+  })
+    return () => {
+      console.log("turning off socket on assignPickup ");
       socket.off("assignPickup");
       socket.off("assignPickupSpecific");
       socket.off("informCancelPickup");
-      socket.off("informCancelVolunteer");
-		});
-		const unsub = () => {
-			console.log("remove all listeners");
-			onMount();
-			onUnmount();
-
-		}
-		// Return the function to unsubscribe from the event so it gets removed on unmount
-		return () => unsub();
-	}, [navigation])
+    }
+  }, [route.params.driveDataChanged])
 
   async function onClick(id) {
     Alert.alert(
@@ -183,7 +111,10 @@ export default function Dashboard({ navigation, route }) {
             id.volunteer = vol_id;
             console.log(id);
             socket.emit("acceptPickup", { "message": id })
-            navigation.navigate("firststep", { id });
+            navigation.dispatch(
+              StackActions.replace('firststep', {id})
+            )
+            // navigation.navigate("firststep", { id });
           }
         },
         {

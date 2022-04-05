@@ -49,6 +49,30 @@ module.exports = {
         return resp
     },
 
+    create_induction_request: async (value)=>{
+        const resp = await fetch(API_URL.concat("/api/volunteer/placeInductionRequest"), {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(value)
+        })
+        .then((response)=>{
+            console.log("Induction response: ",response)
+            return response.json();
+        })
+        .then((json)=>{
+            console.log(json);
+            return json;
+        })
+        .catch((e) =>{
+            console.log(e);
+            console.log("error");
+        })
+        return resp;
+    },
+
     get_pickups: async () =>{
         const token = await localStorage.getData('auth_token');
         const resp = await fetch(API_URL.concat("/api/volunteer/getPickups"), {
