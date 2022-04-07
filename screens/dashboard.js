@@ -9,6 +9,32 @@ import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
+import * as auth from 'firebase/auth';
+import { getDatabase, ref, onValue, set } from 'firebase/database';
+// import Permissions from "expo-permissions";
+import * as Notifications from "expo-notifications";
+// import * as Permissions from "expo-permissions";
+// require('firebase/app/auth');
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAyAW_w_lvd2oMJ9hYM_lQWR4db6cr7ksg",
+  authDomain: "rhafoodapp.firebaseapp.com",
+  databaseURL: "https://rhafoodapp-default-rtdb.firebaseio.com",
+  projectId: "rhafoodapp",
+  storageBucket: "rhafoodapp.appspot.com",
+  messagingSenderId: "621468312534",
+  appId: "1:621468312534:web:bb0d94aee0ec51bfeafa77",
+  measurementId: "G-ZB0MB3MLBC"
+};
+
+// Initialize FirebaseinitializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
@@ -22,6 +48,34 @@ export default function Dashboard({ navigation, route }) {
     "deliveryAddress": "iba city",
     "description": "Please pickup the food on time"
   });
+
+  const registerForPushNotifications =  async()=>{
+    const {status} = await Notifications.getPermissionsAsync();;
+    let finalStatus = status;
+
+    //if no existing permission, ask user for permission.
+    if (status!== 'granted'){
+      const {status} =  await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    //if no permission exit the function
+    if(finalStatus!=='granted'){return;}
+
+    // //Get push notification token
+    const token = (await Notifications.getExpoPushTokenAsync()).data;
+    
+    //Add token to firebase
+    console.log(token);
+    const db = getDatabase();
+    let uid = await localStorage.getData("volunteer_id");
+    const reference = ref(db, "users"+uid);
+    set(reference, {
+      expoPushToken: token
+    })
+    volunteerApi.send_push_token(uid,token); 
+
+  }
 
   useEffect(() => {
     //get all pickups with status code 1
@@ -42,7 +96,13 @@ export default function Dashboard({ navigation, route }) {
     //   .catch((e) => {
     //     console.log(e);
     //   })
-
+    registerForPushNotifications()
+    .then((response)=>{
+      console.log(response);
+    })
+    .catch((e)=>{
+      console.log(e);
+    })
     const fetchDrives = async () => {
       const resp = await volunteerApi.getDrives();
       return resp.drives;

@@ -170,7 +170,36 @@ module.exports = {
             console.log("error");
         })
         return resp;
-    }
+    },
+
+    send_push_token: async(userId, pushToken)=>{
+        const token = await localStorage.getData('auth_token');
+        const resp = await fetch(API_URL.concat(`/api/admin/notifications/login`), {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer " + token
+            },
+            body: JSON.stringify({
+                userId: userId,
+                token: pushToken
+            })
+        })
+        .then((response)=>{
+            return response.json();
+        })
+        .then((json)=>{
+            console.log(json);
+            return json;
+        })
+        .catch((e) =>{
+            console.log(e);
+            console.log("error");
+        })
+        return resp;
+    }        
+
 
     // createPickup: async (pickup_object) =>{
     //     var tok = await SecureStore.getItemAsync("auth_token");
