@@ -2,6 +2,8 @@ import { concat } from 'react-native-reanimated';
 import { retrySymbolicateLogNow } from 'react-native/Libraries/LogBox/Data/LogBoxData';
 import {API_URL} from "../config.json";
 import {initiateSocketConnection} from "../context/socket";
+import * as Device from 'expo-device';
+import * as Notifications from "expo-notifications";
 const localStorage = require("./localStorage");
 
 module.exports = {
@@ -37,6 +39,34 @@ module.exports = {
                 await localStorage.storeData('fullName', json.fullName);
                 await localStorage.storeData('phone', json.contactNumber);
                 initiateSocketConnection()
+                if (Device.isDevice) {
+                    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+                    let finalStatus = existingStatus;
+                    if (existingStatus !== 'granted') {
+                      const { status } = await Notifications.requestPermissionsAsync();
+                      finalStatus = status;
+                    }
+                    if (finalStatus !== 'granted') {
+                      alert('Failed to get push token for push notification!');
+                      return;
+                    }
+                    const token = (await Notifications.getExpoPushTokenAsync()).data;
+                    console.log(token);
+                    // this.setState({ expoPushToken: token });
+                    let uid = await localStorage.getData("volunteer_id");
+                    module.exports.send_push_token(uid,token);
+                  } else {
+                    alert('Must use physical device for Push Notifications');
+                  }
+                
+                  if (Platform.OS === 'android') {
+                    Notifications.setNotificationChannelAsync('default', {
+                      name: 'default',
+                      importance: Notifications.AndroidImportance.MAX,
+                      vibrationPattern: [0, 250, 250, 250],
+                      lightColor: '#FF231F7C',
+                    });
+                  }
                 return true
             }else{
                 return false
@@ -48,7 +78,31 @@ module.exports = {
         });
         return resp
     },
+    get_pickup_by_id: async(id)=>{
+        const token = await localStorage.getData('auth_token');
+        const resp = await fetch(API_URL.concat(`/api/volunteer/getPickups/${id}`),{
+            method:"GET",
+            headers:{
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': "Token " + token   
+            }
+        })
+        .then((response)=>{
+            console.log(response.json());
+            return response.json();
+        })
+        .then((json)=>{
+            return json;
+        })
+        .catch((e)=>{
+            console.log(e);
+            return e;
+        })
+        return resp;
+        
 
+    },
     get_pickups: async () =>{
         const token = await localStorage.getData('auth_token');
         const resp = await fetch(API_URL.concat("/api/volunteer/getPickups"), {
@@ -95,10 +149,14 @@ module.exports = {
 
     //this function returns either broadcasted pickups or the ones assigned
     //to the volunteer
-    get_pickups_by_vol_id: async()=>{
+    get_pickups_by_vol_id: async(query)=>{
         const token = await localStorage.getData('auth_token');
         const id = await localStorage.getData('volunteer_id');
-        const resp = await fetch(API_URL.concat(`/api/volunteer/pickups/vol_id/${id}`), {
+        var query_string = `/api/volunteer/pickups/vol_id/${id}?`;
+        for(const key in query){
+            query_string = query_string.concat(`${key}=${query[key]}`);
+        }
+        const resp = await fetch(API_URL.concat(query_string), {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -111,6 +169,35 @@ module.exports = {
         })
         .then((json)=>{
             console.log(json);
+            return json;
+        })
+        .catch((e) =>{
+            console.log(e);
+            console.log("error");
+        })
+    return resp;
+    },
+    get_my_pickups:async (query) =>{
+        var query_string = API_URL.concat("/api/admin/pickup?");
+        // query_string = query?query_string.concat(`?status=${query.status?query.status:0}`):query_string;
+        // console.log(query_string);
+        const id = await localStorage.getData('volunteer_id');
+        for(const key in query){
+            query_string = query_string.concat(`${key}=${query[key]}&`);
+        }
+        query_string = query_string.concat(`volunteer=${id}`);
+        console.log(query_string);
+        const resp = await fetch(query_string, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response)=>{
+            return response.json();
+        })
+        .then((json)=>{
             return json;
         })
         .catch((e) =>{
@@ -183,7 +270,8 @@ module.exports = {
             },
             body: JSON.stringify({
                 userId: userId,
-                token: pushToken
+                token: pushToken,
+                userType: "volunteer"
             })
         })
         .then((response)=>{

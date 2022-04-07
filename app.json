@@ -18,12 +18,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rha.foodapp",
-      "buildNumber": "1.0.0"
+      "bundleIdentifier": "com.rhavolapp.rha"
     },
     "android": {
-      "package":"com.rha.foodapp",
-      "versionCode":1,
+      "package": "com.rhavolapp.rha",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

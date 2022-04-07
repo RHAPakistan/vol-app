@@ -38,11 +38,32 @@ function FirstStep({ navigation, route }) {
 			// Call any action and update data
             const get_prov = async () => {
                 var current_provider = await volunteerApi.get_provider(pickup.provider);
-                return current_provider
+                console.log("RERERERERERE", pickup);
+                var current_pickup = (await volunteerApi.get_my_pickups({_id:pickup._id})).pickups[0];
+                console.log("==>}",current_pickup);    
+                return [current_provider, current_pickup]
             }
             get_prov()
                 .then((response) => {
-                    setCurrentProvider(response);
+                    const [current_provider, current_pickup] = response;
+                    setCurrentProvider(current_provider);
+                    setPickup(current_pickup);
+                    console.log("dsadsadsadsadsada",current_pickup);
+                    if(current_pickup.status>3){
+                        setProgressCount(3);
+                        setTitle("Finished");
+                        setHeading("The food has been delivered or cancelled");
+                    }
+                    else if (current_pickup.status<=1){
+                        setProgressCount(1)
+                        setTitle("First Step");
+                        setHeading("This pickup is your responsibility now");
+                    }
+                    else if (current_pickup.status==2){
+                        setProgressCount(2);
+                        setTitle("Second Step");
+                        setHeading("The food has been picked");
+                    }
                 })
                 .catch((e) => {
                     console.log(e);
@@ -159,8 +180,16 @@ function FirstStep({ navigation, route }) {
                 title='Go to Dashboard'
                 action={navigateDashboard}
             />
-
         }
+        else{
+            return <ActionBox
+                type='primary'
+                title='Go to Dashboard'
+                action={navigateDashboard}
+            />
+        }
+
+        
     }
     return (
         <ScrollView>

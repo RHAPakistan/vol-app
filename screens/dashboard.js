@@ -16,25 +16,28 @@ import * as Notifications from "expo-notifications";
 // import * as Permissions from "expo-permissions";
 // require('firebase/app/auth');
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp} from "firebase/app";
+import { getMessaging, getToken } from "firebase/messaging";
+import * as Device from 'expo-device';
+// import firebase from "react-native-firebase";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAyAW_w_lvd2oMJ9hYM_lQWR4db6cr7ksg",
-  authDomain: "rhafoodapp.firebaseapp.com",
-  databaseURL: "https://rhafoodapp-default-rtdb.firebaseio.com",
-  projectId: "rhafoodapp",
-  storageBucket: "rhafoodapp.appspot.com",
-  messagingSenderId: "621468312534",
-  appId: "1:621468312534:web:bb0d94aee0ec51bfeafa77",
-  measurementId: "G-ZB0MB3MLBC"
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAyAW_w_lvd2oMJ9hYM_lQWR4db6cr7ksg",
+//   authDomain: "rhafoodapp.firebaseapp.com",
+//   databaseURL: "https://rhafoodapp-default-rtdb.firebaseio.com",
+//   projectId: "rhafoodapp",
+//   storageBucket: "rhafoodapp.appspot.com",
+//   messagingSenderId: "621468312534",
+//   appId: "1:621468312534:web:c32e9af208868428eafa77",
+//   measurementId: "G-RM3G610BTK"
+// };
 
-// Initialize FirebaseinitializeApp(firebaseConfig);
-initializeApp(firebaseConfig);
+// // Initialize FirebaseinitializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 
 export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
@@ -49,33 +52,51 @@ export default function Dashboard({ navigation, route }) {
     "description": "Please pickup the food on time"
   });
 
-  const registerForPushNotifications =  async()=>{
-    const {status} = await Notifications.getPermissionsAsync();;
-    let finalStatus = status;
+  // const registerForPushNotifications =  async()=>{
+  //   // const defaultAppMessaging = firebase.messaging();
+  //   // console.log(defaultAppMessaging.getToken());
+  //   // const messaging = getMessaging(app);
+  //   // messaging.getToken({vapidKey: "BC6HtnhCQlzuBIymKCWarc7jCVV-lpXlLdX-3sST0HYB-L-nKVPDmgzl6qjT1G1xviC6eaIONCk0NTO7mjf5Z-s"});
+  //   // // getToken(messaging, { vapidKey: 'BC6HtnhCQlzuBIymKCWarc7jCVV-lpXlLdX-3sST0HYB-L-nKVPDmgzl6qjT1G1xviC6eaIONCk0NTO7mjf5Z-s' }).then((currentToken) => {
+  //   // //   if (currentToken) {
+  //   // //     // Send the token to your server and update the UI if necessary
+  //   // //     // ...
+  //   // //     console.log("The token is ====",currentToken);
+  //   // //   } else {
+  //   // //     // Show permission request UI
+  //   // //     console.log('No registration token available. Request permission to generate one.');
+  //   // //     // ...
+  //   // //   }
+  //   // // }).catch((err) => {
+  //   // //   console.log('An error occurred while retrieving token. ', err);
+  //   // //   // ...
+  //   // // });
 
-    //if no existing permission, ask user for permission.
-    if (status!== 'granted'){
-      const {status} =  await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
+  //   // const {status} = await Notifications.getPermissionsAsync();;
+  //   // let finalStatus = status;
 
-    //if no permission exit the function
-    if(finalStatus!=='granted'){return;}
+  //   // //if no existing permission, ask user for permission.
+  //   // if (status!== 'granted'){
+  //   //   const {status} =  await Notifications.requestPermissionsAsync();
+  //   //   finalStatus = status;
+  //   // }
 
-    // //Get push notification token
-    const token = (await Notifications.getExpoPushTokenAsync()).data;
-    
-    //Add token to firebase
-    console.log(token);
-    const db = getDatabase();
-    let uid = await localStorage.getData("volunteer_id");
-    const reference = ref(db, "users"+uid);
-    set(reference, {
-      expoPushToken: token
-    })
-    volunteerApi.send_push_token(uid,token); 
+  //   // //if no permission exit the function
+  //   // if(finalStatus!=='granted'){return;}
 
-  }
+  //   // // //Get push notification token
+  //   // const token = (await Notifications.getDevicePushTokenAsync()).data;
+  //   // //Add token to firebase
+  //   // console.log(token);
+  //   // const db = getDatabase();
+  //   // let uid = await localStorage.getData("volunteer_id");
+  //   // const reference = ref(db, "users"+uid);
+  //   // set(reference, {
+  //   //   expoPushToken: token
+  //   // })
+  //   // volunteerApi.send_push_token(uid,token); 
+
+  // }
 
   useEffect(() => {
     //get all pickups with status code 1
@@ -96,13 +117,13 @@ export default function Dashboard({ navigation, route }) {
     //   .catch((e) => {
     //     console.log(e);
     //   })
-    registerForPushNotifications()
-    .then((response)=>{
-      console.log(response);
-    })
-    .catch((e)=>{
-      console.log(e);
-    })
+    // registerForPushNotifications()
+    // .then((response)=>{
+    //   console.log(response);
+    // })
+    // .catch((e)=>{
+    //   console.log(e);
+    // })
     const fetchDrives = async () => {
       const resp = await volunteerApi.getDrives();
       return resp.drives;

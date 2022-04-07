@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:621468312534:android:ebf33cc2664daba4eafa77",
+        "mobilesdk_app_id": "1:621468312534:android:a4fc6cfff7afb7d6eafa77",
         "android_client_info": {
-          "package_name": "com.rha.foodapp"
+          "package_name": "com.rhavolapp.rha"
         }
       },
       "oauth_client": [
