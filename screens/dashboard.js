@@ -168,7 +168,7 @@ export default function Dashboard({ navigation, route }) {
 
 	useEffect(() => {
 
-		const onMount = navigation.addListener('focus', () => {
+		const onMount = navigation.addListener('focus', async() => {
 			// The screen is focused
 			// Call any action and update data
       console.log("dashboard screen mounted");

@@ -48,11 +48,10 @@ function FirstStep({ navigation, route }) {
                     const [current_provider, current_pickup] = response;
                     setCurrentProvider(current_provider);
                     setPickup(current_pickup);
-                    console.log("dsadsadsadsadsada",current_pickup);
-                    if(current_pickup.status>3){
+                    if(current_pickup.status==4){
                         setProgressCount(3);
                         setTitle("Finished");
-                        setHeading("The food has been delivered or cancelled");
+                        setHeading("The food has been delivered");
                     }
                     else if (current_pickup.status<=1){
                         setProgressCount(1)
@@ -60,9 +59,19 @@ function FirstStep({ navigation, route }) {
                         setHeading("This pickup is your responsibility now");
                     }
                     else if (current_pickup.status==2){
+                        setProgressCount(1)
+                        setTitle("First Step");
+                        setHeading("This pickup is your responsibility now");
+                    }
+                    else if(current_pickup.status==3){
                         setProgressCount(2);
                         setTitle("Second Step");
                         setHeading("The food has been picked");
+                    }
+                    else if(current_pickup.status==5){
+                        setProgressCount(3);
+                        setTitle("Cancelled");
+                        setHeading("The Pickup has been cancelled");
                     }
                 })
                 .catch((e) => {
