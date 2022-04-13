@@ -8,7 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Dashboard from "./dashboard";
 import Settings_screen from "./settings";
 import Support from "./support";
-import History from "./history";
+import MyPickups from "./myPickups";
 import DashStack from "./dashStack";
 import CustomDrawerContent from "../components/CustomDrawerContent";
 import PrimaryHeader from "../components/ScreenHeaders/PrimaryHeader";
@@ -43,13 +43,13 @@ export default function Drawer() {
         name='Dashboard'
         component={DashStack} 
         options={{headerShown: false}}/>
-      {/* <RootDrawerNavigator.Screen
-        name='History'
-        component={History}
+       <RootDrawerNavigator.Screen
+        name='My Pickups'
+        component={MyPickups}
         options={({ navigation }) => {
-          return PrimaryHeader(navigation, "History");
+          return PrimaryHeader(navigation, "My Pickups");
         }} />
-      <RootDrawerNavigator.Screen
+      {/*<RootDrawerNavigator.Screen
         name='Settings'
         component={Settings_screen} 
         options={({ navigation }) => {

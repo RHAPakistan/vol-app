@@ -12,6 +12,7 @@ import Dashboard from "./dashboard";
 import Contact from "./contact";
 import PrimaryHeader from "../components/ScreenHeaders/PrimaryHeader";
 import FirstStep from "./steps/FirstStep";
+// import Drive from "../components/Drives";
 import driveDetails from './driveDetails';
 
 export default function DashStack({ navigation }) {
@@ -47,6 +48,10 @@ export default function DashStack({ navigation }) {
         name="contact"
         component={Contact}
       />
+      {/* <Stack.Screen
+        name="driveDetails"
+        component={Drive}
+        /> */}
       <Stack.Screen 
           name= "driveDetails"
           component={driveDetails}

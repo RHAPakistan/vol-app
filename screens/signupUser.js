@@ -28,6 +28,7 @@ const signupUser = ({navigation}) =>{
                             })
                             .catch((e)=>{
                                 console.log(e);
+                                alert("Error: ",e)
                             });
                             navigation.goBack();   
                         }
@@ -57,7 +58,7 @@ const signupUser = ({navigation}) =>{
 const thisStyles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#155F30',
         padding: '15%'
     },
     heading: {fontSize: 18, textAlign: "center", paddingBottom: '5%', fontWeight: 'bold'},

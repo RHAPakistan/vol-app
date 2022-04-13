@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, Text, View, Image, Button, Icon, SafeAreaView, TouchableOpacity, Picker } from 'react-native';
+import { Alert,StyleSheet, Text, View, Image, Button, Icon, SafeAreaView, TouchableOpacity, Picker } from 'react-native';
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { styles } from "../styles";
 import ModalDropdown from "react-native-modal-dropdown";
@@ -9,7 +9,9 @@ import ActionBox from "../../components/ActionBox";
 import ProgressBar from "../../components/ProgressBar";
 import { SocketContext } from "../../context/socket";
 import GlobalStyles from "../../styles/GlobalStyles";
+
 const volunteerApi = require("../../helpers/volunteerApi");
+
 
 function FirstStep({ navigation, route }) {
 
@@ -29,28 +31,81 @@ function FirstStep({ navigation, route }) {
     const [title, setTitle] = React.useState("First Step");
     const [current_provider, setCurrentProvider] = React.useState({});
 
-    useEffect(() => {
-        const get_prov = async () => {
-            var current_provider = await volunteerApi.get_provider(pickup.provider);
-            return current_provider
-        }
-        get_prov()
-            .then((response) => {
-                setCurrentProvider(response);
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-        socket.on("informCancelPickup", (socket_data) => {
-            console.log("Pickup cancelled here", socket_data.pickup);
-            navigation.navigate("dashboard");
-        })
+	useEffect(() => {
 
-        return () => {
+		const onMount = navigation.addListener('focus', () => {
+			// The screen is focused
+			// Call any action and update data
+            const get_prov = async () => {
+                var current_provider = await volunteerApi.get_provider(pickup.provider);
+                console.log("RERERERERERE", pickup);
+                var current_pickup = (await volunteerApi.get_my_pickups({_id:pickup._id})).pickups[0];
+                console.log("==>}",current_pickup);    
+                return [current_provider, current_pickup]
+            }
+            get_prov()
+                .then((response) => {
+                    const [current_provider, current_pickup] = response;
+                    setCurrentProvider(current_provider);
+                    setPickup(current_pickup);
+                    if(current_pickup.status==4){
+                        setProgressCount(3);
+                        setTitle("Finished");
+                        setHeading("The food has been delivered");
+                    }
+                    else if (current_pickup.status<=1){
+                        setProgressCount(1)
+                        setTitle("First Step");
+                        setHeading("This pickup is your responsibility now");
+                    }
+                    else if (current_pickup.status==2){
+                        setProgressCount(1)
+                        setTitle("First Step");
+                        setHeading("This pickup is your responsibility now");
+                    }
+                    else if(current_pickup.status==3){
+                        setProgressCount(2);
+                        setTitle("Second Step");
+                        setHeading("The food has been picked");
+                    }
+                    else if(current_pickup.status==5){
+                        setProgressCount(3);
+                        setTitle("Cancelled");
+                        setHeading("The Pickup has been cancelled");
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                })
+            socket.on("informCancelPickup", (socket_data) => {
+                console.log("Pickup cancelled here", socket_data.pickup);
+                Alert.alert(
+                    `Pickup cancelled by ${socket_data.role}`,
+                    "Abort the journey",
+                    [
+                        {
+                            text:"Ok, go back to dashboard",
+                            onPress: ()=>{navigation.navigate("dashboard")}
+                        }   
+                    ]
+                )
+            })
+			console.log("turning ON sockets => informCancelPickup");
+		});
+
+		const onUnmount = navigation.addListener('blur', ()=>{
+			console.log("turning off sockets => informCancelPickup");
             socket.off("informCancelPickup");
-        }
+		});
+		const unsub = () => {
+			console.log("remove all listeners");
+			onMount();
+			onUnmount();
 
-    }, [])
+		}
+		// Return the function to unsubscribe from the event so it gets removed on unmount
+		return () => unsub();
+	}, [navigation])
 
     const data = {
         BOOKING_TIME: pickup.placementTime,
@@ -75,7 +130,7 @@ function FirstStep({ navigation, route }) {
         pickup.broadcast = true;
         pickup.status = 1;
         delete pickup.volunteer;
-        socket.emit("cancelPickup", { "pickup": pickup,"status":2,"role":"volunteer"});
+        socket.emit("cancelPickup", { pickup: pickup,status:2,role:"volunteer"});
         navigation.navigate("dashboard");
     }
 
@@ -93,7 +148,7 @@ function FirstStep({ navigation, route }) {
         //emit food delivered -> finishPickup
         //change status to 3 (completed)
         console.log("this was clicked!");
-        pickup.status = 3
+        pickup.status = 4
         socket.emit("finishPickup", { "message": pickup });
         setProgressCount(3);
         setTitle("Finished");
@@ -134,8 +189,16 @@ function FirstStep({ navigation, route }) {
                 title='Go to Dashboard'
                 action={navigateDashboard}
             />
-
         }
+        else{
+            return <ActionBox
+                type='primary'
+                title='Go to Dashboard'
+                action={navigateDashboard}
+            />
+        }
+
+        
     }
     return (
         <ScrollView>

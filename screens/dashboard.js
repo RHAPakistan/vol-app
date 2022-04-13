@@ -9,6 +9,35 @@ import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
+import * as auth from 'firebase/auth';
+import { getDatabase, ref, onValue, set } from 'firebase/database';
+// import Permissions from "expo-permissions";
+import * as Notifications from "expo-notifications";
+// import * as Permissions from "expo-permissions";
+// require('firebase/app/auth');
+// Import the functions you need from the SDKs you need
+import { initializeApp} from "firebase/app";
+import { getMessaging, getToken } from "firebase/messaging";
+import * as Device from 'expo-device';
+// import firebase from "react-native-firebase";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAyAW_w_lvd2oMJ9hYM_lQWR4db6cr7ksg",
+//   authDomain: "rhafoodapp.firebaseapp.com",
+//   databaseURL: "https://rhafoodapp-default-rtdb.firebaseio.com",
+//   projectId: "rhafoodapp",
+//   storageBucket: "rhafoodapp.appspot.com",
+//   messagingSenderId: "621468312534",
+//   appId: "1:621468312534:web:c32e9af208868428eafa77",
+//   measurementId: "G-RM3G610BTK"
+// };
+
+// // Initialize FirebaseinitializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 
 export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
@@ -23,26 +52,78 @@ export default function Dashboard({ navigation, route }) {
     "description": "Please pickup the food on time"
   });
 
+  // const registerForPushNotifications =  async()=>{
+  //   // const defaultAppMessaging = firebase.messaging();
+  //   // console.log(defaultAppMessaging.getToken());
+  //   // const messaging = getMessaging(app);
+  //   // messaging.getToken({vapidKey: "BC6HtnhCQlzuBIymKCWarc7jCVV-lpXlLdX-3sST0HYB-L-nKVPDmgzl6qjT1G1xviC6eaIONCk0NTO7mjf5Z-s"});
+  //   // // getToken(messaging, { vapidKey: 'BC6HtnhCQlzuBIymKCWarc7jCVV-lpXlLdX-3sST0HYB-L-nKVPDmgzl6qjT1G1xviC6eaIONCk0NTO7mjf5Z-s' }).then((currentToken) => {
+  //   // //   if (currentToken) {
+  //   // //     // Send the token to your server and update the UI if necessary
+  //   // //     // ...
+  //   // //     console.log("The token is ====",currentToken);
+  //   // //   } else {
+  //   // //     // Show permission request UI
+  //   // //     console.log('No registration token available. Request permission to generate one.');
+  //   // //     // ...
+  //   // //   }
+  //   // // }).catch((err) => {
+  //   // //   console.log('An error occurred while retrieving token. ', err);
+  //   // //   // ...
+  //   // // });
+
+  //   // const {status} = await Notifications.getPermissionsAsync();;
+  //   // let finalStatus = status;
+
+  //   // //if no existing permission, ask user for permission.
+  //   // if (status!== 'granted'){
+  //   //   const {status} =  await Notifications.requestPermissionsAsync();
+  //   //   finalStatus = status;
+  //   // }
+
+  //   // //if no permission exit the function
+  //   // if(finalStatus!=='granted'){return;}
+
+  //   // // //Get push notification token
+  //   // const token = (await Notifications.getDevicePushTokenAsync()).data;
+  //   // //Add token to firebase
+  //   // console.log(token);
+  //   // const db = getDatabase();
+  //   // let uid = await localStorage.getData("volunteer_id");
+  //   // const reference = ref(db, "users"+uid);
+  //   // set(reference, {
+  //   //   expoPushToken: token
+  //   // })
+  //   // volunteerApi.send_push_token(uid,token); 
+
+  // }
+
   useEffect(() => {
     //get all pickups with status code 1
-    console.log("dashboard screen mounted");
-    const fetchData = async () => {
-      const resp = await volunteerApi.get_pickups_by_vol_id();
-      // console.log("The pickups are ",resp.pickups);
-      const volunteer_id = await localStorage.getData("volunteer_id");
-      console.log(volunteer_id);
-      return [volunteer_id, resp.pickups];
-    }
-    fetchData()
-      .then((response) => {
-        var [volunteer_id, pickups] = response;
-        setData(pickups);
-        setVolid(volunteer_id);
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-
+    // console.log("dashboard screen mounted");
+    // const fetchData = async () => {
+    //   const resp = await volunteerApi.get_pickups_by_vol_id();
+    //   // console.log("The pickups are ",resp.pickups);
+    //   const volunteer_id = await localStorage.getData("volunteer_id");
+    //   console.log(volunteer_id);
+    //   return [volunteer_id, resp.pickups];
+    // }
+    // fetchData()
+    //   .then((response) => {
+    //     var [volunteer_id, pickups] = response;
+    //     setData(pickups);
+    //     setVolid(volunteer_id);
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   })
+    // registerForPushNotifications()
+    // .then((response)=>{
+    //   console.log(response);
+    // })
+    // .catch((e)=>{
+    //   console.log(e);
+    // })
     const fetchDrives = async () => {
       const resp = await volunteerApi.getDrives();
       return resp.drives;
@@ -58,44 +139,116 @@ export default function Dashboard({ navigation, route }) {
 
     //listen for any newly broadcasted or unicasted pickups
 
-    console.log("Listening for assign Pickup at dashboard:35");
-    socket.on("assignPickup", (sock_data) => {
-      console.log("Received assignPickup message")
-      data.push(sock_data.message);
-      setData(data);
-    })
+  //   console.log("Listening for assign Pickup at dashboard:35");
+  //   socket.on("assignPickup", (sock_data) => {
+  //     console.log("Received assignPickup message")
+  //     data.push(sock_data.message);
+  //     setData(data);
+  //   })
 
-    socket.on("assignPickupSpecific", (sock_data) => {
-      console.log("Received specific pickup", sock_data.message);
-      setPopPickup(sock_data.message);
-      setModalVisible(!modalVisible);
-    })
+  //   socket.on("assignPickupSpecific", (sock_data) => {
+  //     console.log("Received specific pickup", sock_data.message);
+  //     setPopPickup(sock_data.message);
+  //     setModalVisible(!modalVisible);
+  //   })
 
-    socket.on("informCancelPickup", (socket_data)=>{
-      console.log("Pickup cancelled here", socket_data.pickup);
-      setData((prevState)=>{
-        var data_copy = [...prevState];
-        console.log("current ", data_copy);
-        for( var i = 0; i < data_copy.length; i++){ 
-          if ( data_copy[i]._id === socket_data.pickup._id) { 
-            console.log("remove this");
-            data_copy.splice(i, 1); 
-            console.log(data_copy);
-            return(data_copy);
-            break;
-          }
-        
-        }
-        return(data_copy);
+  //   socket.on("informCancelPickup", (socket_data)=>{
+  //     console.log("Pickup cancelled here", socket_data.pickup);
+  //     fetchData()
+  //     .then((response) => {
+  //       var [volunteer_id, pickups] = response;
+  //       setData(pickups);
+  //       setVolid(volunteer_id);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     })
+  // })
+  }, [route.params.driveDataChanged])
+
+	useEffect(() => {
+
+		const onMount = navigation.addListener('focus', async() => {
+			// The screen is focused
+			// Call any action and update data
+      console.log("dashboard screen mounted");
+      const fetchData = async () => {
+        const resp = await volunteerApi.get_pickups_by_vol_id();
+        // console.log("The pickups are ",resp.pickups);
+        const volunteer_id = await localStorage.getData("volunteer_id");
+        console.log(volunteer_id);
+        return [volunteer_id, resp.pickups];
+      }
+      fetchData()
+        .then((response) => {
+          var [volunteer_id, pickups] = response;
+          setData(pickups);
+          setVolid(volunteer_id);
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+        console.log("Listening for assign Pickup at dashboard:35");
+        socket.on("assignPickup", (sock_data) => {
+          console.log("Received assignPickup message");
+          setData((prevState)=>{
+            var pic = [...prevState];
+            pic.push(sock_data.message);
+            return pic;
+          });
+        })
+    
+        socket.on("assignPickupSpecific", (sock_data) => {
+          console.log("Received specific pickup", sock_data.message);
+          setPopPickup(sock_data.message);
+          setModalVisible(!modalVisible);
+        })
+    
+        socket.on("informCancelPickup", (socket_data)=>{
+          console.log("Pickup cancelled here", socket_data.pickup);
+          //incase modal is on then turn it off, cuz the pickup is no more.
+          setModalVisible(false);
+          fetchData()
+          .then((response) => {
+            var [volunteer_id, pickups] = response;
+            setData(pickups);
+            setVolid(volunteer_id);
+          })
+          .catch((e) => {
+            console.log(e);
+          })
       })
-  })
-    return () => {
-      console.log("turning off socket on assignPickup ");
+
+      socket.on("informCancelVolunteer",(socket_data)=>{
+        console.log(`pickup cancelled by ${socket_data.role}`);
+        fetchData()
+        .then((response) => {
+          var [volunteer_id, pickups] = response;
+          setData(pickups);
+          setVolid(volunteer_id);
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+      })
+		});
+
+		const onUnmount = navigation.addListener('blur', ()=>{
+      console.log("turning off socket: assignPickup | assignPickupSpecific | informCancelPickup");
       socket.off("assignPickup");
       socket.off("assignPickupSpecific");
       socket.off("informCancelPickup");
-    }
-  }, [route.params.driveDataChanged])
+      socket.off("informCancelVolunteer");
+		});
+		const unsub = () => {
+			console.log("remove all listeners");
+			onMount();
+			onUnmount();
+
+		}
+		// Return the function to unsubscribe from the event so it gets removed on unmount
+		return () => unsub();
+	}, [navigation])
 
   async function onClick(id) {
     Alert.alert(
@@ -111,10 +264,7 @@ export default function Dashboard({ navigation, route }) {
             id.volunteer = vol_id;
             console.log(id);
             socket.emit("acceptPickup", { "message": id })
-            navigation.dispatch(
-              StackActions.replace('firststep', {id})
-            )
-            // navigation.navigate("firststep", { id });
+            navigation.navigate("firststep", { id });
           }
         },
         {
