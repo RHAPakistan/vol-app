@@ -7,7 +7,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Drawer from './screens/drawer';
 import LoginGuest from './components/LoginGuest';
 import LoginUser from './components/LoginUser';
-import LoginUser from './components/LoginUser';
 import sendOTP from './components/ForgetPassword/sendOTP';
 import confirmOTP from './components/ForgetPassword/confirmOTP';
 import changePassword from './components/ForgetPassword/changePassword';
