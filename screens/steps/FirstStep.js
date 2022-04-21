@@ -9,6 +9,7 @@ import ActionBox from "../../components/ActionBox";
 import ProgressBar from "../../components/ProgressBar";
 import { SocketContext } from "../../context/socket";
 import GlobalStyles from "../../styles/GlobalStyles";
+import { ActivityIndicator } from "react-native";
 
 const volunteerApi = require("../../helpers/volunteerApi");
 
@@ -30,7 +31,7 @@ function FirstStep({ navigation, route }) {
     const [heading, setHeading] = React.useState("This pickup is your responsibility now");
     const [title, setTitle] = React.useState("First Step");
     const [current_provider, setCurrentProvider] = React.useState({});
-
+	const [isLoading, setIsLoading] = React.useState(true);
 	useEffect(() => {
 
 		const onMount = navigation.addListener('focus', () => {
@@ -73,6 +74,7 @@ function FirstStep({ navigation, route }) {
                         setTitle("Cancelled");
                         setHeading("The Pickup has been cancelled");
                     }
+                    setIsLoading(false);
                 })
                 .catch((e) => {
                     console.log(e);
@@ -203,6 +205,7 @@ function FirstStep({ navigation, route }) {
     return (
         <ScrollView>
             <SafeAreaView style={styles.containerDashboard} >
+            {isLoading && <ActivityIndicator color={"#165E2E"} />}
                 <View style={GlobalStyles.screenTitle}>
                     <Text style={GlobalStyles.screenTitleText}>{title}</Text>
                 </View>

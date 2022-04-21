@@ -4,7 +4,6 @@ import {API_URL} from "../config.json";
 import {initiateSocketConnection} from "../context/socket";
 import * as Device from 'expo-device';
 import * as Notifications from "expo-notifications";
-import { async } from '@firebase/util';
 const localStorage = require("./localStorage");
 
 module.exports = {
