@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Component, useState, useEffect } from "react";
-import { Pressable, StyleSheet, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { Pressable, StyleSheet, ScrollView, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from "./styles";
 import { StackActions } from "@react-navigation/native";
 const volunteerApi = require("../helpers/volunteerApi.js");
@@ -10,6 +10,7 @@ import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
 import { ActivityIndicator } from "react-native";
+const dashboardStyles = require('../styles/dashboardStyles');
 
 export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
@@ -174,11 +175,13 @@ export default function Dashboard({ navigation, route }) {
         pickup={popPickup} onClickPickup={onClick} onClickReject={onClickReject} />
 
       {/* get pickups */}
+      <ScrollView style={{height: '10%'}}>
       {data.length != 0 ? data.map((item) => (
         <PickupCard key={item._id} pickup={item} onClickPickup={() => { onClick(item) }} onClickReject={onClickReject} reject={true} />
       ))
         :
         <Text style={styles.bodyText}>No pickups yet</Text>}
+        </ScrollView>
       <View style={styles.lineStyle} />
       <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
     </SafeAreaView>
