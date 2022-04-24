@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Form, FormItem, Picker } from 'react-native-form-component';
+import Geolocation from '@react-native-community/geolocation';
 
-
-const InductionForm = ({ onSubmit }) => {
+const InductionForm = ({ onSubmit, setIsMapView, coordinate, assignedCoordinate, setCoordinate}) => {
 
 	const [fullname,setfullname] = useState("");
 	const [email, setemail] = useState("");
@@ -26,6 +26,16 @@ const InductionForm = ({ onSubmit }) => {
 	const [pickupTiming,setpickupTiming] = useState("");
 	const [questions,setquestions] = useState("");
 
+	useEffect(() =>{
+        Geolocation.getCurrentPosition(
+          //Will give you the current location
+          (position) => {
+			setCoordinate({latitude: position.coords.latitude, longitude: position.coords.longitude})
+           }, (error) => alert(error.message), { 
+             enableHighAccuracy: true, timeout: 1000*60, maximumAge: 1000*60*2
+           }
+        );
+    }, [])
 	const submitPressed = ()=>{
 		if(fullname === "" || email === "" ||cnic === "" ||dob === "" ||contactNumber === "" || gender === "" || occupation === "" ||address === "" ||
 			emergencyContact === "" || relationEmergency === "" ||fbLink === "" ||medicalCondition === "" ||reasonForApply === "" ||skills === "" ||pickupTiming === "")
@@ -33,6 +43,13 @@ const InductionForm = ({ onSubmit }) => {
 			onSubmit(false)
 		}
 		else{
+			let locationCoordinate = coordinate;
+			if(assignedCoordinate){
+				locationCoordinate = {
+					type: 'Point',
+					coordinates : [assignedCoordinate.longitude, assignedCoordinate.latitude]
+				}
+			}
 			onSubmit({
 				fullname: fullname,
 				email: email,
@@ -53,13 +70,25 @@ const InductionForm = ({ onSubmit }) => {
 				reasonForApply: reasonForApply,
 				skills: skills,
 				pickupTiming: pickupTiming,
-				questions: questions
+				questions: questions,
+				locationCoordinate: locationCoordinate
 			});
 		}
 	}
 
 	return (
 		<ScrollView>
+			<TouchableOpacity onPress={()=>setIsMapView(true)} style={{margin: '3%',
+					alignItems: 'center',
+					justifyContent: 'center',
+					width: 130,
+					height: 45,
+					backgroundColor: '#ADD8E6',
+					borderRadius: 5
+				}}
+				>
+					<Text style={{color: 'black'}}>Set Pin Location</Text>
+				</TouchableOpacity>
 			<Form onButtonPress={() => submitPressed()}>
 				<FormItem
 					label="Fullname"
@@ -208,5 +237,4 @@ const InductionForm = ({ onSubmit }) => {
 		</ScrollView>
 	);
 };
-
 export default InductionForm;

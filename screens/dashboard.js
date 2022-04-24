@@ -58,6 +58,7 @@ export default function Dashboard({ navigation, route }) {
         .then((response) => {
           var [volunteer_id, pickups] = response;
           setData(pickups);
+          console.log(data);
           setVolid(volunteer_id);
           setIsLoading(false);
         })

@@ -20,6 +20,7 @@ const LoginUser = ({ navigation, shutDownModal }) => {
         }
     }
     const forgetClicked = ()=>{
+        console.log("Forget Clicked");
         navigation.navigate('send_otp')
     }
     const backClicked = () => {
