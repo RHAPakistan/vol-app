@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Component, useState, useEffect } from "react";
-import { Pressable, StyleSheet, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { Pressable, StyleSheet, ScrollView, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { styles } from "./styles";
 import { StackActions } from "@react-navigation/native";
 const volunteerApi = require("../helpers/volunteerApi.js");
@@ -9,35 +9,8 @@ import PickupModal from "../components/Notifications/pickupModal";
 import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
-import * as auth from 'firebase/auth';
-import { getDatabase, ref, onValue, set } from 'firebase/database';
-// import Permissions from "expo-permissions";
-import * as Notifications from "expo-notifications";
-// import * as Permissions from "expo-permissions";
-// require('firebase/app/auth');
-// Import the functions you need from the SDKs you need
-import { initializeApp} from "firebase/app";
-import { getMessaging, getToken } from "firebase/messaging";
-import * as Device from 'expo-device';
-// import firebase from "react-native-firebase";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAyAW_w_lvd2oMJ9hYM_lQWR4db6cr7ksg",
-//   authDomain: "rhafoodapp.firebaseapp.com",
-//   databaseURL: "https://rhafoodapp-default-rtdb.firebaseio.com",
-//   projectId: "rhafoodapp",
-//   storageBucket: "rhafoodapp.appspot.com",
-//   messagingSenderId: "621468312534",
-//   appId: "1:621468312534:web:c32e9af208868428eafa77",
-//   measurementId: "G-RM3G610BTK"
-// };
-
-// // Initialize FirebaseinitializeApp(firebaseConfig);
-// const app = initializeApp(firebaseConfig);
+import { ActivityIndicator } from "react-native";
+const dashboardStyles = require('../styles/dashboardStyles');
 
 export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
@@ -45,6 +18,7 @@ export default function Dashboard({ navigation, route }) {
   const [drives, setDrives] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [vol_id, setVolid] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [popPickup, setPopPickup] = useState({
     "_id": 1,
     "pickupAdress": "iba karachi",
@@ -52,78 +26,7 @@ export default function Dashboard({ navigation, route }) {
     "description": "Please pickup the food on time"
   });
 
-  // const registerForPushNotifications =  async()=>{
-  //   // const defaultAppMessaging = firebase.messaging();
-  //   // console.log(defaultAppMessaging.getToken());
-  //   // const messaging = getMessaging(app);
-  //   // messaging.getToken({vapidKey: "BC6HtnhCQlzuBIymKCWarc7jCVV-lpXlLdX-3sST0HYB-L-nKVPDmgzl6qjT1G1xviC6eaIONCk0NTO7mjf5Z-s"});
-  //   // // getToken(messaging, { vapidKey: 'BC6HtnhCQlzuBIymKCWarc7jCVV-lpXlLdX-3sST0HYB-L-nKVPDmgzl6qjT1G1xviC6eaIONCk0NTO7mjf5Z-s' }).then((currentToken) => {
-  //   // //   if (currentToken) {
-  //   // //     // Send the token to your server and update the UI if necessary
-  //   // //     // ...
-  //   // //     console.log("The token is ====",currentToken);
-  //   // //   } else {
-  //   // //     // Show permission request UI
-  //   // //     console.log('No registration token available. Request permission to generate one.');
-  //   // //     // ...
-  //   // //   }
-  //   // // }).catch((err) => {
-  //   // //   console.log('An error occurred while retrieving token. ', err);
-  //   // //   // ...
-  //   // // });
-
-  //   // const {status} = await Notifications.getPermissionsAsync();;
-  //   // let finalStatus = status;
-
-  //   // //if no existing permission, ask user for permission.
-  //   // if (status!== 'granted'){
-  //   //   const {status} =  await Notifications.requestPermissionsAsync();
-  //   //   finalStatus = status;
-  //   // }
-
-  //   // //if no permission exit the function
-  //   // if(finalStatus!=='granted'){return;}
-
-  //   // // //Get push notification token
-  //   // const token = (await Notifications.getDevicePushTokenAsync()).data;
-  //   // //Add token to firebase
-  //   // console.log(token);
-  //   // const db = getDatabase();
-  //   // let uid = await localStorage.getData("volunteer_id");
-  //   // const reference = ref(db, "users"+uid);
-  //   // set(reference, {
-  //   //   expoPushToken: token
-  //   // })
-  //   // volunteerApi.send_push_token(uid,token); 
-
-  // }
-
   useEffect(() => {
-    //get all pickups with status code 1
-    // console.log("dashboard screen mounted");
-    // const fetchData = async () => {
-    //   const resp = await volunteerApi.get_pickups_by_vol_id();
-    //   // console.log("The pickups are ",resp.pickups);
-    //   const volunteer_id = await localStorage.getData("volunteer_id");
-    //   console.log(volunteer_id);
-    //   return [volunteer_id, resp.pickups];
-    // }
-    // fetchData()
-    //   .then((response) => {
-    //     var [volunteer_id, pickups] = response;
-    //     setData(pickups);
-    //     setVolid(volunteer_id);
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //   })
-    // registerForPushNotifications()
-    // .then((response)=>{
-    //   console.log(response);
-    // })
-    // .catch((e)=>{
-    //   console.log(e);
-    // })
     const fetchDrives = async () => {
       const resp = await volunteerApi.getDrives();
       return resp.drives;
@@ -136,34 +39,6 @@ export default function Dashboard({ navigation, route }) {
       .catch((e) => {
         console.log(e);
       })
-
-    //listen for any newly broadcasted or unicasted pickups
-
-  //   console.log("Listening for assign Pickup at dashboard:35");
-  //   socket.on("assignPickup", (sock_data) => {
-  //     console.log("Received assignPickup message")
-  //     data.push(sock_data.message);
-  //     setData(data);
-  //   })
-
-  //   socket.on("assignPickupSpecific", (sock_data) => {
-  //     console.log("Received specific pickup", sock_data.message);
-  //     setPopPickup(sock_data.message);
-  //     setModalVisible(!modalVisible);
-  //   })
-
-  //   socket.on("informCancelPickup", (socket_data)=>{
-  //     console.log("Pickup cancelled here", socket_data.pickup);
-  //     fetchData()
-  //     .then((response) => {
-  //       var [volunteer_id, pickups] = response;
-  //       setData(pickups);
-  //       setVolid(volunteer_id);
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     })
-  // })
   }, [route.params.driveDataChanged])
 
 	useEffect(() => {
@@ -183,7 +58,9 @@ export default function Dashboard({ navigation, route }) {
         .then((response) => {
           var [volunteer_id, pickups] = response;
           setData(pickups);
+          console.log(data);
           setVolid(volunteer_id);
+          setIsLoading(false);
         })
         .catch((e) => {
           console.log(e);
@@ -292,18 +169,20 @@ export default function Dashboard({ navigation, route }) {
   }
   return (
     <SafeAreaView style={styles.containerDashboard}>
-
+			{isLoading && <ActivityIndicator color={"#165E2E"} />}
       <Text style={styles.heading} >Pickups</Text>
       <View style={styles.lineStyle} />
       <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible}
         pickup={popPickup} onClickPickup={onClick} onClickReject={onClickReject} />
 
       {/* get pickups */}
+      <ScrollView style={{height: '10%'}}>
       {data.length != 0 ? data.map((item) => (
         <PickupCard key={item._id} pickup={item} onClickPickup={() => { onClick(item) }} onClickReject={onClickReject} reject={true} />
       ))
         :
         <Text style={styles.bodyText}>No pickups yet</Text>}
+        </ScrollView>
       <View style={styles.lineStyle} />
       <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
     </SafeAreaView>

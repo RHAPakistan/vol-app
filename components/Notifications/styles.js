@@ -66,6 +66,19 @@ const styles = StyleSheet.create({
     detailsText: {
         marginTop: '2%',
         fontFamily: 'sans-serif-light',
+    },
+    mapsButton: {
+      margin: '2%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '50%',
+      height: 25,
+      borderRadius: 5,
+      backgroundColor: '#ADD8E6',
+    },
+    mapsButtonText:{
+      color: 'white',
+      fontSize: 14,
     }
   });
 export default styles;  

@@ -5,6 +5,7 @@ import HomeScreen from './screens/home';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Drawer from './screens/drawer';
+import LoginGuest from './components/LoginGuest';
 import LoginUser from './components/LoginUser';
 import sendOTP from './components/ForgetPassword/sendOTP';
 import confirmOTP from './components/ForgetPassword/confirmOTP';

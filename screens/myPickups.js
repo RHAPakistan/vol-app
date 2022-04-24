@@ -7,7 +7,9 @@ import { socket, SocketContext } from '../context/socket';
 import GlobalStyles from '../styles/GlobalStyles';
 import PickupList from '../components/ButtonList/PickupList';
 const volunteerApi = require("../helpers/volunteerApi.js");
-
+LogBox.ignoreLogs([
+	'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation - use another VirtualizedList-backed container instead.',
+]);
 function MyPickups({navigation}) {
 	const socket = useContext(SocketContext);
 	const [data, setData] = useState([]);

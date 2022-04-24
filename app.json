@@ -17,16 +17,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.rhavolapp.rha"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.rhavolapp.rha",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.rha.volapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
