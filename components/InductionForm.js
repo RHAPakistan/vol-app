@@ -32,7 +32,7 @@ const InductionForm = ({ onSubmit, setIsMapView, coordinate, assignedCoordinate,
           (position) => {
 			setCoordinate({latitude: position.coords.latitude, longitude: position.coords.longitude})
            }, (error) => alert(error.message), { 
-             enableHighAccuracy: true, timeout: 1000*60, maximumAge: 1000*60*2
+             enableHighAccuracy: false, timeout: 1000*60, maximumAge: 1000*60*2
            }
         );
     }, [])
