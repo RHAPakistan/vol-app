@@ -21,7 +21,7 @@
     "expo-secure-store": "~10.2.0",
     "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
-    "expo-updates": "~0.8.1",
+    "expo-updates": "~0.4.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.4",
@@ -34,13 +34,17 @@
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-select-dropdown": "^1.10.0",
-    "react-native-unimodules": "0.12.0",
+    "react-native-unimodules": "~0.12.0",
     "react-native-web": "~0.13.12",
     "socket-io": "^1.0.0",
-    "socket.io-client": "^4.4.1"
+    "socket.io-client": "^4.4.1",
+    "expo-permissions": "~10.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0"
+    "@babel/core": "^7.9.0",
+    "babel-jest": "~25.2.6",
+    "jest": "~25.2.6",
+    "react-test-renderer": "~16.13.1"
   },
   "private": true,
   "name": "vol-app",

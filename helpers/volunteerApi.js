@@ -74,6 +74,7 @@ module.exports = {
         })
         .catch((e) => {
             console.log(e);
+            alert(e);
             console.log("error");
         });
         return resp
