@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         backgroundColor: '#155F30',
-        marginTop: '5%',
+        marginTop: '7%',
         marginLeft: '5%'
 
     },
@@ -48,7 +48,6 @@ export const styles = StyleSheet.create({
         paddingTop: '2%'
     },
     requestScrollView:{
-        marginTop: '2%',
         backgroundColor: '#F0F0F0',
         borderRadius: 8,
         maxWidth: '97%',
@@ -64,11 +63,12 @@ export const styles = StyleSheet.create({
     requestHeader:{
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 16
     },
     detailsText: {
-        marginTop: '2%',
         fontFamily: 'sans-serif-light',
         fontWeight: 'normal',
+        fontSize: 16
     },
     footer:{
         marginTop: 10,
@@ -78,6 +78,12 @@ export const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor:'black',
         margin:10,
+   },
+   row: {
+       marginTop: '2%',
+        flexDirection: 'row',
+        justifyContent: "flex-start",
+        flexWrap: "wrap"
    }
     
 });

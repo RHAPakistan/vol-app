@@ -81,5 +81,10 @@ export const styles = StyleSheet.create({
     bottomText: {
         fontSize: 22,
         
+    },
+    value: {
+        fontSize: 16,
+        textAlign: 'right',
+        marginRight: '5%'
     }
 });

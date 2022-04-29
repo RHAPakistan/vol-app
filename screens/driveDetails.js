@@ -11,7 +11,23 @@ const driveDetails = ({navigation, route})  =>{
         const res = await volunteerApi.acceptDrive(drive._id);
         return res;
     }
-
+    const convertTime =(date)=>{
+        let formatDate = new Date(date);
+        let hrs = formatDate.getHours()
+        let mins = formatDate.getMinutes()
+        if(hrs<=9)
+        hrs = '0' + hrs
+        if(mins<10)
+        mins = '0' + mins
+        let postTime = ''
+        if(hrs<12)
+            postTime= hrs + ':' + mins + ' AM'
+        else{
+            hrs = hrs -12
+            postTime= hrs + ':' + mins + ' PM'
+        }
+        return postTime
+    }
     async function onAccept(){
         Alert.alert(
           "Drive",
@@ -52,28 +68,31 @@ const driveDetails = ({navigation, route})  =>{
             <View style={styles.line}></View>
             <View style={styles.container}>
                 <View style={styles.item}><Text style={styles.column1Text}>Location:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.driveLocation  : '*loading*'}</Text></View>
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.driveLocation  : '*loading*'}</Text></View>
 
                 <View style={styles.item}><Text style={styles.column1Text}>Date:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.date  : '*loading*'}</Text></View> 
+                <View style={styles.item}><Text style={styles.value}>{drive? (new Date(drive.date)).toUTCString().substring(0, 17)  : '*loading*'}</Text></View> 
+
+                <View style={styles.item}><Text style={styles.column1Text}>Time:</Text></View>
+                <View style={styles.item}><Text style={styles.value}>{drive? convertTime(drive.date)  : '*loading*'}</Text></View> 
 
                 <View style={styles.item}><Text style={styles.column1Text}>Duration:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.duration  : '*loading*'}</Text></View>  
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.duration  : '*loading*'}</Text></View>  
 
                 <View style={styles.item}><Text style={styles.column1Text}>Meetup Point:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.meetupPoint  : '*loading*'}</Text></View>            
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.meetupPoint  : '*loading*'}</Text></View>            
 
                 <View style={styles.item}><Text style={styles.column1Text}>Meetup Time:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.meetupTime  : '*loading*'}</Text></View> 
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.meetupTime  : '*loading*'}</Text></View> 
 
                 <View style={styles.item}><Text style={styles.column1Text}>Will be leaving at:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.departureTime  : '*loading*'}</Text></View> 
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.departureTime  : '*loading*'}</Text></View> 
 
                 <View style={styles.item}><Text style={styles.column1Text}>Volunteer Cateory:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.volunteerCategory  : '*loading*'}</Text></View> 
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.volunteerCategory  : '*loading*'}</Text></View> 
 
                 <View style={styles.item}><Text style={styles.column1Text}>Estimated volunteers:</Text></View>
-                <View style={styles.item}><Text style={{fontSize: 16, textAlign: 'right', marginRight: '5%'}}>{drive? drive.maxCount  : '*loading*'}</Text></View> 
+                <View style={styles.item}><Text style={styles.value}>{drive? drive.maxCount  : '*loading*'}</Text></View> 
             </View>
             <View><Text style={styles.description}>Description/guidelines:</Text></View>
             <View>
