@@ -5,6 +5,6 @@
   "minify": false,
   "urlRandomness": "4z-cun",
   "https": false,
-  "devClient": true,
-  "scheme": "com.rha.volapp"
+  "scheme": null,
+  "devClient": false
 }
