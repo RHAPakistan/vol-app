@@ -1,8 +1,7 @@
 import React, {useState} from "react";
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, SafeAreaView} from 'react-native';
+import { Text, View, Image, TouchableOpacity} from 'react-native';
 import { styles } from "./styles";
 import LoginUser from "../components/LoginUser";
-import signupUser from "./signupUser";
 
 const HomeScreen = ({navigation}) => {
 

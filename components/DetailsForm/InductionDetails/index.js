@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React from 'react';
 import { View } from 'react-native';
 import GlobalStyles from '../../../styles/GlobalStyles';
@@ -8,9 +7,6 @@ import TextDescription from "../TextDescription";
 
 
 const InductionDetails = ({ data }) => {
-	const LocationButtonHandler = () => {
-		console.log('Location:', data.business_map);
-	};
 
 	return (
 		<View>

@@ -1,6 +1,5 @@
-import React, { useContext } from "react";
-import { useState, useEffect } from "react";
-import { Text, View, SafeAreaView, TouchableOpacity, Alert, ScrollView, TextInput} from 'react-native';
+import React from "react";
+import { Text, View, SafeAreaView, TouchableOpacity, Alert, TextInput} from 'react-native';
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { styles } from '../styles/driveStyles';
 

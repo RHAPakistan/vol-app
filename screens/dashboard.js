@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
-import { Component, useState, useEffect } from "react";
-import { Pressable, StyleSheet, ScrollView, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { useState, useEffect } from "react";
+import { ScrollView, Text, View, SafeAreaView, Alert } from 'react-native';
 import { styles } from "./styles";
-import { StackActions } from "@react-navigation/native";
 const volunteerApi = require("../helpers/volunteerApi.js");
 import { SocketContext } from "../context/socket";
 import PickupModal from "../components/Notifications/pickupModal";
@@ -10,7 +9,6 @@ import PickupCard from "../components/Notifications/pickupCard";
 import Drives from "../components/Drives";
 import localStorage from "../helpers/localStorage";
 import { ActivityIndicator } from "react-native";
-const dashboardStyles = require('../styles/dashboardStyles');
 
 export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
@@ -152,9 +150,6 @@ export default function Dashboard({ navigation, route }) {
       ]
     )
 
-  }
-  function onClickContact() {
-    navigation.navigate('contact')
   }
 
   function onClickReject() {

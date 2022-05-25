@@ -1,15 +1,10 @@
-import moment from 'moment';
 import React from 'react';
 import { View } from 'react-native';
 import GlobalStyles from '../../../styles/GlobalStyles';
 
 import TextLine from '../TextLine';
-import TextLineClickable from '../TextLineClickable';
 
 const VolunteerDetails = ({ data }) => {
-	const LocationButtonHandler = () => {
-		console.log('Location:', data.business_map);
-	};
 
 	return (
 		<View>

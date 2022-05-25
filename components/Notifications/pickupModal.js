@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
-import styles from "./styles";
+import React from "react";
+import { Alert, Modal} from "react-native";
 import PickupCard from "./pickupCard";
 
 const PickupModal = ({modalVisible, setModalVisible, pickup, onClickPickup, onClickReject}) => {

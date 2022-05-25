@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { SafeAreaView, View, TextInput, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import { SafeAreaView, View, TextInput, Text, TouchableOpacity, Alert} from 'react-native';
 import { styles } from './styles';
 var volunteerApi = require("../../helpers/volunteerApi.js");
 

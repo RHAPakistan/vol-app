@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {View, Text, StyleSheet, Alert} from "react-native";
 import InductionForm from '../components/InductionForm'
 var volunteerApi = require("../helpers/volunteerApi.js");
@@ -7,7 +7,6 @@ import Maps from "../components/Maps";
 const signupUser = ({navigation}) =>{
     const [coordinate, setCoordinate] = React.useState(null);
     const [assignedCoordinate, setAssignedCoordinate] = React.useState(null);
-    // [assignedCoordinate, setAssignedCoordinate] = React.useState({});
     const [isMapView, setIsMapView] = React.useState(false);
     const placeRequest = async (value)=>{
         console.log("Form Data",value);
@@ -28,7 +27,6 @@ const signupUser = ({navigation}) =>{
                         onPress: () => {
                             placeRequest(value)
                             .then((response)=>{
-                                //console.log("Response from induction request: ",response);
                                 alert(response.message)
                             })
                             .catch((e)=>{

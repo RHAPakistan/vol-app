@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Animated, View, TouchableOpacity, Text, TextInput, StyleSheet, ScrollView, Platform, SafeAreaView } from 'react-native';
+import { Animated, View, TouchableOpacity, Text, TextInput, SafeAreaView } from 'react-native';
 import { styles } from './styles';
-const localStorage = require("../helpers/localStorage");
 var providerApi = require("../helpers/volunteerApi.js");
 
 

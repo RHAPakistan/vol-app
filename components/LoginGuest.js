@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, TextInput } from 'react-native';
-import * as Animatable from 'react-native-animatable';
-import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from './styles';
 
 const LoginGuest = ({ navigation, shutDownModal }) => {

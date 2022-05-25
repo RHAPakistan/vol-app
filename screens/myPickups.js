@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import { LogBox, Text, Pressable, View, Keyboard, Card, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { LogBox, Text, Pressable, View, Keyboard } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import Options from '../components/ManagerOptions/Options';
-import { socket, SocketContext } from '../context/socket';
+import { SocketContext } from '../context/socket';
 import GlobalStyles from '../styles/GlobalStyles';
 import PickupList from '../components/ButtonList/PickupList';
 const volunteerApi = require("../helpers/volunteerApi.js");

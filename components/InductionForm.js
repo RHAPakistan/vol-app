@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { ScrollView, TouchableOpacity, Text } from 'react-native';
 import { Form, FormItem, Picker } from 'react-native-form-component';
 import Geolocation from '@react-native-community/geolocation';
 

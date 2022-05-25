@@ -1,10 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-
 import TextLine from '../TextLine';
-import ButtonLine from '../ButtonLine';
 import TextLineClickable from '../TextLineClickable';
-import ButtonToTextClickable from '../ButtonToTextClickable';
 import TextDescription from '../TextDescription';
 
 import styles from '../styles';

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { View, SafeAreaView} from 'react-native';
 import { ScrollView} from "react-native-gesture-handler";
 import PickupDetails from "../components/DetailsForm/PickupDetails"
@@ -16,8 +16,6 @@ function ThirdStep({navigation, route}) {
     }   
     const data = {
 		BOOKING_TIME: pickup.placementTime,
-		// COMPLETION_TIME: '{COMPLETION_TIME}',
-		// CANCELLATION_TIME: '{CANCELLATION_TIME}',
 		CONTACT_NAME: pickup._id,
 		CONTACT_PHONE: pickup.provieder_phone,
 		PROVIDER: {
