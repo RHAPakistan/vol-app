@@ -3,8 +3,8 @@
   "lanType": "ip",
   "dev": true,
   "minify": false,
-  "urlRandomness": null,
+  "urlRandomness": "4z-cun",
   "https": false,
-  "scheme": null,
-  "devClient": false
+  "scheme": "com.rha.volapp",
+  "devClient": true
 }

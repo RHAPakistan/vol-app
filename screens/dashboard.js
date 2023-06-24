@@ -1,139 +1,190 @@
 import React, { useContext } from "react";
-import { useState, useEffect } from "react";
-import { Text, View, SafeAreaView, TouchableOpacity, Alert, ScrollView} from 'react-native';
+import { Component, useState, useEffect } from "react";
+import { Pressable, StyleSheet, ScrollView, Text, View, Modal, Image, Button, PermissionsAndroid, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { styles } from "./styles";
+import { StackActions } from "@react-navigation/native";
 const volunteerApi = require("../helpers/volunteerApi.js");
-import { styles } from '../styles/dashboardStyles';
-import { SocketContext} from "../context/socket";
+import { SocketContext } from "../context/socket";
+import PickupModal from "../components/Notifications/pickupModal";
+import PickupCard from "../components/Notifications/pickupCard";
+import Drives from "../components/Drives";
+import localStorage from "../helpers/localStorage";
+import { ActivityIndicator } from "react-native";
+const dashboardStyles = require('../styles/dashboardStyles');
 
-export default function Dashboard({navigation}) {
+export default function Dashboard({ navigation, route }) {
   const socket = useContext(SocketContext);
-  const [pickups, setPickups] = useState([]);
+  const [data, setData] = useState([]);
   const [drives, setDrives] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [vol_id, setVolid] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [popPickup, setPopPickup] = useState({
+    "_id": 1,
+    "pickupAdress": "iba karachi",
+    "deliveryAddress": "iba city",
+    "description": "Please pickup the food on time"
+  });
 
-  useEffect(()=>{
-    //get all pickups with status code 1
-    console.log("dashboard screen mounted");
-
-		const fetchPickups = async()=>{
-			const resp = await volunteerApi.get_pickups_by_vol_id();
-			return resp.pickups;
-		}
-		fetchPickups()
-		.then((response)=>{
-			setPickups(response);
-		})
-		.catch((e)=>{
-			console.log(e);
-		});
-    
-    const fetchDrives = async()=>{
-			const resp = await volunteerApi.getDrives();
-			return resp.drives;
-		}
-		fetchDrives()
-		.then((response)=>{
-      console.log(response);
-			setDrives(response);
-		})
-		.catch((e)=>{
-			console.log(e);
-		})
-
-    //listen for any newly broadcasted or unicasted pickups
-    console.log("Listening for assign Pickup at dashboard:35");
-    socket.on("assignPickup", (sock_data)=>{
-      console.log("Received assignPickup message")
-      pickups.push(sock_data.message);
-      setPickups(pickups);
-    })
-    return ()=>{
-      console.log("turning off socket on assignPickup ");
-      socket.off("assignPickup");
+  useEffect(() => {
+    const fetchDrives = async () => {
+      const resp = await volunteerApi.getDrives();
+      return resp.drives;
     }
-  },[])
-  
-  async function onClickPickup(pickup){
+    fetchDrives()
+      .then((response) => {
+        console.log(response);
+        setDrives(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  }, [route.params.driveDataChanged])
+
+	useEffect(() => {
+
+		const onMount = navigation.addListener('focus', async() => {
+			// The screen is focused
+			// Call any action and update data
+      console.log("dashboard screen mounted");
+      const fetchData = async () => {
+        const resp = await volunteerApi.get_pickups_by_vol_id();
+        // console.log("The pickups are ",resp.pickups);
+        const volunteer_id = await localStorage.getData("volunteer_id");
+        console.log(volunteer_id);
+        return [volunteer_id, resp.pickups];
+      }
+      fetchData()
+        .then((response) => {
+          var [volunteer_id, pickups] = response;
+          setData(pickups);
+          console.log(data);
+          setVolid(volunteer_id);
+          setIsLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+        console.log("Listening for assign Pickup at dashboard:35");
+        socket.on("assignPickup", (sock_data) => {
+          console.log("Received assignPickup message");
+          setData((prevState)=>{
+            var pic = [...prevState];
+            pic.push(sock_data.message);
+            return pic;
+          });
+        })
+    
+        socket.on("assignPickupSpecific", (sock_data) => {
+          console.log("Received specific pickup", sock_data.message);
+          setPopPickup(sock_data.message);
+          setModalVisible(!modalVisible);
+        })
+    
+        socket.on("informCancelPickup", (socket_data)=>{
+          console.log("Pickup cancelled here", socket_data.pickup);
+          //incase modal is on then turn it off, cuz the pickup is no more.
+          setModalVisible(false);
+          fetchData()
+          .then((response) => {
+            var [volunteer_id, pickups] = response;
+            setData(pickups);
+            setVolid(volunteer_id);
+          })
+          .catch((e) => {
+            console.log(e);
+          })
+      })
+
+      socket.on("informCancelVolunteer",(socket_data)=>{
+        console.log(`pickup cancelled by ${socket_data.role}`);
+        fetchData()
+        .then((response) => {
+          var [volunteer_id, pickups] = response;
+          setData(pickups);
+          setVolid(volunteer_id);
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+      })
+		});
+
+		const onUnmount = navigation.addListener('blur', ()=>{
+      console.log("turning off socket: assignPickup | assignPickupSpecific | informCancelPickup");
+      socket.off("assignPickup");
+      socket.off("assignPickupSpecific");
+      socket.off("informCancelPickup");
+      socket.off("informCancelVolunteer");
+		});
+		const unsub = () => {
+			console.log("remove all listeners");
+			onMount();
+			onUnmount();
+
+		}
+		// Return the function to unsubscribe from the event so it gets removed on unmount
+		return () => unsub();
+	}, [navigation])
+
+  async function onClick(id) {
     Alert.alert(
       "Pickup",
       "Do you want to accept this pickup?",
       [
         {
-          text:"Yes",
+          text: "Yes",
           onPress: () => {
             console.log("pickup accepted");
             //change the status to 2 (accepted)
-            pickup.status = 2
-            socket.emit("acceptPickup",{"message":pickup})
-            navigation.navigate("secondstep", {pickup});
+            id.status = 2
+            id.volunteer = vol_id;
+            console.log(id);
+            socket.emit("acceptPickup", { "message": id })
+            navigation.navigate("firststep", { id });
           }
         },
         {
-          text:"No",
-          onPress: () => {console.log("Ok pressed")},
-          style:"Cancel"
+          text: "No",
+          onPress: () => { console.log("Ok pressed") },
+          style: "Cancel"
         }
       ]
     )
 
   }
-
-  const onClickDrive = (drive) =>{
-    navigation.navigate("driveDetails", {drive})
+  function onClickContact() {
+    navigation.navigate('contact')
   }
 
-  return ( 
-    
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.requestText}>Active Pickup Requests</Text>
-      <ScrollView style={styles.requestScrollView}>        
-          {console.log(pickups)}
-          {pickups? 
-              pickups.map(pickup => (
-              <View style={styles.requestCard}  key={pickup._id}>
+  function onClickReject() {
+    popPickup.broadcast = true
+    delete popPickup.volunteer;
+    socket.emit("broadcastPickup", { "message": popPickup });
+    setModalVisible(!modalVisible);
+  }
 
-                  <Text style={styles.requestHeader}>Pickup Loaction:</Text>
-                  <Text style={styles.detailsText}>{pickup.pickupAddress}</Text>
+  const onClickDrive = (drive) =>{
+    navigation.navigate("driveDetails", {drive, driveDataChanged: route.params.driveDataChanged})
+  }
+  return (
+    <SafeAreaView style={styles.containerDashboard}>
+			{isLoading && <ActivityIndicator color={"#165E2E"} />}
+      <Text style={styles.heading} >Pickups</Text>
+      <View style={styles.lineStyle} />
+      <PickupModal modalVisible={modalVisible} setModalVisible={setModalVisible}
+        pickup={popPickup} onClickPickup={onClick} onClickReject={onClickReject} />
 
-                  <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Dropoff Loaction:</Text>
-                  <Text style={styles.detailsText}>{pickup.deliveryAddress}</Text>
-
-                  <Text style={[styles.requestHeader, {marginTop: '3%'}]}>Food Details:</Text>
-                  <Text style={styles.detailsText}>{pickup.description}</Text>
-
-                  <TouchableOpacity style={styles.button} onPress={()=>onClickPickup(pickup)}>
-                      <Text style={styles.buttonText}>Accept</Text>         
-                  </TouchableOpacity>
-              </View>
-          ))
-          :
-          <View><Text style={styles.nullText}>No pickup as of yet.</Text></View> 
-          }
-      </ScrollView>
-      <Text style={styles.requestText}>Drives Requests</Text>
-      <ScrollView style={styles.requestScrollView}>
-        {console.log(drives)}
-          {drives? 
-              drives.map(drive => (
-              <View style={styles.requestCard}  key={drive._id}>
-                  <Text style={styles.requestHeader}>Drive Location/Area:</Text>
-                  <Text style={styles.detailsText}>{drive.driveLocation}</Text>
-
-                  <Text style={styles.requestHeader}>Date and Time:</Text>
-                  <Text style={styles.detailsText}>{drive.date}</Text>
-                  
-                  <TouchableOpacity style={styles.button} onPress={()=>onClickDrive(drive)}>
-                      <Text style={styles.buttonText}>See Details</Text>         
-                  </TouchableOpacity>
-              </View>
-          ))
-          :
-          <View><Text style={styles.nullText}>No drive as of yet.</Text></View> 
-        }
-      </ScrollView>
-      <View style={styles.footer}>
-          <Text>Footer here</Text>
-      </View>            
+      {/* get pickups */}
+      <ScrollView style={{height: '10%'}}>
+      {data.length != 0 ? data.map((item) => (
+        <PickupCard key={item._id} pickup={item} onClickPickup={() => { onClick(item) }} onClickReject={onClickReject} reject={true} />
+      ))
+        :
+        <Text style={styles.bodyText}>No pickups yet</Text>}
+        </ScrollView>
+      <View style={styles.lineStyle} />
+      <Drives drives={drives} onClickDrive={onClickDrive}></Drives>
     </SafeAreaView>
-
   );
 }

@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         backgroundColor: '#155F30',
-        marginTop: '5%',
+        marginTop: '7%',
         marginLeft: '5%'
 
     },
@@ -38,7 +38,8 @@ export const styles = StyleSheet.create({
     nullText:{
         fontWeight: 'bold',
         fontSize: 16,
-        margin: '5%'
+        margin: '5%',
+        alignItems: "center"
     },
     requestText:{
         fontSize: 18,
@@ -47,11 +48,10 @@ export const styles = StyleSheet.create({
         paddingTop: '2%'
     },
     requestScrollView:{
-        marginTop: '2%',
-        backgroundColor: '#fff',
+        backgroundColor: '#F0F0F0',
         borderRadius: 8,
         maxWidth: '97%',
-        maxHeight: '70%',
+        maxHeight: '80%',
         minHeight: '20%'
     },
     requestCard: {
@@ -63,15 +63,27 @@ export const styles = StyleSheet.create({
     requestHeader:{
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 16
     },
     detailsText: {
-        marginTop: '2%',
         fontFamily: 'sans-serif-light',
         fontWeight: 'normal',
+        fontSize: 16
     },
     footer:{
         marginTop: 10,
         backgroundColor: '#fff'
     },
+    lineStyle:{
+        borderWidth: 0.5,
+        borderColor:'black',
+        margin:10,
+   },
+   row: {
+       marginTop: '2%',
+        flexDirection: 'row',
+        justifyContent: "flex-start",
+        flexWrap: "wrap"
+   }
     
 });

@@ -38,6 +38,11 @@ export const styles = StyleSheet.create({
         marginTop: Platform.OS === 'ios' ? 0 : -12,
         flex: 1,
         paddingLeft: 10,
-        color: '#05375a',
+        color: '#FFFFFF',
     },
+    lineStyle:{
+        borderWidth: 0.5,
+        borderColor:'black',
+        margin:10,
+   }
 });
